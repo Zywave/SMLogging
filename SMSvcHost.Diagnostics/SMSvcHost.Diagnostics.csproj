@@ -62,6 +62,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>AssemblyResources.resx</DependentUpon>
     </Compile>
+    <Compile Include="RequestLogTraceListener.cs" />
     <Compile Include="StringHelpers.cs" />
     <Compile Include="TextWriterTraceListener.cs" />
     <Compile Include="TimeZoneInfoConverter.cs" />
