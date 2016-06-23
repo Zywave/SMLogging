@@ -1,0 +1,40 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.24720.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C1263149-2E62-47DB-9396-CD809BF55A15}"
+	ProjectSection(SolutionItems) = preProject
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SMRequestLogging", "SMRequestLogging\SMRequestLogging.csproj", "{7A39F680-A620-4B15-AF44-56CF6E880A7F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SMRequestLogging.Lab.Client", "SMRequestLogging.Lab.Client\SMRequestLogging.Lab.Client.csproj", "{41A6AA36-ECD8-440C-8101-3117FFEDC13B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SMRequestLogging.Lab", "SMRequestLogging.Lab\SMRequestLogging.Lab.csproj", "{D8C05E87-DF5E-487B-A5F5-D8993C980542}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7A39F680-A620-4B15-AF44-56CF6E880A7F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A39F680-A620-4B15-AF44-56CF6E880A7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A39F680-A620-4B15-AF44-56CF6E880A7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A39F680-A620-4B15-AF44-56CF6E880A7F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{41A6AA36-ECD8-440C-8101-3117FFEDC13B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{41A6AA36-ECD8-440C-8101-3117FFEDC13B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{41A6AA36-ECD8-440C-8101-3117FFEDC13B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{41A6AA36-ECD8-440C-8101-3117FFEDC13B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D8C05E87-DF5E-487B-A5F5-D8993C980542}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D8C05E87-DF5E-487B-A5F5-D8993C980542}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D8C05E87-DF5E-487B-A5F5-D8993C980542}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D8C05E87-DF5E-487B-A5F5-D8993C980542}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

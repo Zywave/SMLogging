@@ -1,0 +1,45 @@
+﻿using System;
+using System.Diagnostics;
+using System.Threading.Tasks;
+
+namespace SMRequestLogging.Lab.Client
+{
+    class Program
+    {
+        static void Main()
+        {
+            Console.WriteLine("Press any key to perform operations");
+            Console.ReadKey();
+            var sw = Stopwatch.StartNew();
+
+            Action action = () =>
+            {
+                using (var service = new LabServiceProxy())
+                {
+                    for (var i = 0; i < 1000; i++)
+                    {
+                        service.GetData(i);
+                    }
+                }
+            };
+
+            Task.WaitAll(
+                Task.Factory.StartNew(action),
+                Task.Factory.StartNew(action),
+                Task.Factory.StartNew(action),
+                Task.Factory.StartNew(action),
+                Task.Factory.StartNew(action),
+                Task.Factory.StartNew(action),
+                Task.Factory.StartNew(action),
+                Task.Factory.StartNew(action),
+                Task.Factory.StartNew(action),
+                Task.Factory.StartNew(action)
+            );
+
+            sw.Stop();
+            Console.WriteLine($"Time taken: {sw.ElapsedMilliseconds}");
+            Console.WriteLine("Press any key to close");
+            Console.ReadKey();
+        }
+    }
+}
