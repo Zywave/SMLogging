@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ServiceModel;
 
 namespace SMRequestLogging
 {
@@ -7,11 +6,9 @@ namespace SMRequestLogging
     {
         public DateTimeOffset DateTime { get; set; }
 
-        public Uri From { get; set; }
+        public string ClientIpAddress { get; set; }
 
-        public Uri To { get; set; }
-
-        public EndpointIdentity Identity { get; set; }
+        public Uri Target { get; set; }
 
         public string Action { get; set; }
     }

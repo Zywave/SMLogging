@@ -19,7 +19,7 @@ namespace SMRequestLogging
             : base(path)
         {
             FlushInterval = 5000;
-            MaxFlushSize = 100;
+            MaxFlushSize = 1000;
 
             _queue = new ConcurrentQueue<Event>();
         }
@@ -33,7 +33,7 @@ namespace SMRequestLogging
             : base(path, name)
         {
             FlushInterval = 5000;
-            MaxFlushSize = 100;
+            MaxFlushSize = 1000;
 
             _queue = new ConcurrentQueue<Event>();
         }
@@ -47,7 +47,7 @@ namespace SMRequestLogging
         /// </summary>
         /// <remarks>
         /// This value specifies the interval between flushes performed by a background thread. If a negative value is specified, background 
-        /// flushing will not be performed.  To perform a flush every time an event is traced, enabled auto flushing on the trace source; 
+        /// flushing will not be performed.  Target perform a flush every time an event is traced, enabled auto flushing on the trace source; 
         /// however this may result in slight performance degradation, as the flush will occur in the main thread. The default flush interval 
         /// is 5000 milliseconds.
         /// </remarks>
@@ -65,8 +65,20 @@ namespace SMRequestLogging
 
         #endregion
 
+        #region Protected Properties
+
+        /// <summary>
+        /// Gets a value indicating whether background flushing is started.
+        /// </summary>
+        protected bool IsBackgroundFlushing
+        {
+            get { return _workerCts != null; }
+        }
+
+        #endregion
+
         #region Public Methods
-        
+
         /// <summary>
         /// Writes trace information to the listener specific output.
         /// </summary>
@@ -77,6 +89,8 @@ namespace SMRequestLogging
         /// <param name="message">The message to write.</param>
         public override void WriteTrace(TraceEventCache eventCache, string source, TraceEventType eventType, int id, string message)
         {
+            EnsureInitialized();
+
             EnqueueEvent(eventCache, source, eventType, id, message);
         }
 
@@ -96,8 +110,6 @@ namespace SMRequestLogging
 
             if (events.Count > 0)
             {
-                EnsureInitialized();
-
                 RollFileIfNecessary();
 
                 if (AcquireLock())
@@ -143,8 +155,7 @@ namespace SMRequestLogging
         }
 
         #endregion
-
-
+        
         #region Private Methods
 
         private void EnqueueEvent(TraceEventCache eventCache, string source, TraceEventType eventType, int id, string message)
@@ -160,7 +171,7 @@ namespace SMRequestLogging
 
             _queue.Enqueue(evt);
 
-            if (FlushInterval >= 0 && !Trace.AutoFlush)
+            if (FlushInterval >= 0 && !Trace.AutoFlush && !IsBackgroundFlushing)
             {
                 StartBackgroundFlushing();
             }

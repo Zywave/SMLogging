@@ -18,26 +18,29 @@ namespace SMRequestLogging.Lab.Client
                 {
                     for (var i = 0; i < 1000; i++)
                     {
+                        var sw1 = Stopwatch.StartNew();
                         service.GetData(i);
+                        sw1.Stop();
+                        Console.WriteLine($"Time taken: {sw1.ElapsedMilliseconds}");
                     }
                 }
             };
 
             Task.WaitAll(
-                Task.Factory.StartNew(action),
-                Task.Factory.StartNew(action),
-                Task.Factory.StartNew(action),
-                Task.Factory.StartNew(action),
-                Task.Factory.StartNew(action),
-                Task.Factory.StartNew(action),
-                Task.Factory.StartNew(action),
-                Task.Factory.StartNew(action),
-                Task.Factory.StartNew(action),
+                //Task.Factory.StartNew(action),
+                //Task.Factory.StartNew(action),
+                //Task.Factory.StartNew(action),
+                //Task.Factory.StartNew(action),
+                //Task.Factory.StartNew(action),
+                //Task.Factory.StartNew(action),
+                //Task.Factory.StartNew(action),
+                //Task.Factory.StartNew(action),
+                //Task.Factory.StartNew(action),
                 Task.Factory.StartNew(action)
             );
 
             sw.Stop();
-            Console.WriteLine($"Time taken: {sw.ElapsedMilliseconds}");
+            Console.WriteLine($"Total time taken: {sw.ElapsedMilliseconds}");
             Console.WriteLine("Press any key to close");
             Console.ReadKey();
         }

@@ -418,7 +418,13 @@ namespace SMRequestLogging
         {
             if (!_isInitialized)
             {
-                Initialize();
+                lock (_initializeLock)
+                {
+                    if (!_isInitialized)
+                    {
+                        Initialize();
+                    }
+                }
             }
         }        
 
@@ -481,8 +487,9 @@ namespace SMRequestLogging
 
         private bool _hasConfiguration = false;
         private bool _isInitialized = false;
+        private static object _initializeLock = new object();
 
-        private const string _defaultTraceFormat = "{DateTime:yyyy-MM-dd HH:mm:ss.FFF} {Message}";
+        private const string _defaultTraceFormat = "{Message}";
         private const string _defaultTraceDataDelimiter = " ";
 
         #endregion
