@@ -487,7 +487,7 @@ namespace SMRequestLogging
 
         private bool _hasConfiguration = false;
         private bool _isInitialized = false;
-        private static object _initializeLock = new object();
+        private static readonly object _initializeLock = new object();
 
         private const string _defaultTraceFormat = "{Message}";
         private const string _defaultTraceDataDelimiter = " ";
