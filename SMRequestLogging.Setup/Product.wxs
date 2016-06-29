@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+	<Product Id="*" Name="Service Model Logging" Language="1033" Version="1.0.0.0" Manufacturer="Zywave" UpgradeCode="3123e40e-cd12-43f4-9a4c-33423c5c5deb">
+		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" InstallPrivileges="elevated" />
+
+    <Binary Id="SMRequestLogging.Setup.CustomActions.CA.dll" SourceFile="..\SMRequestLogging.Setup.CustomActions\bin\$(var.Configuration)\SMRequestLogging.Setup.CustomActions.CA.dll" />
+
+    <CustomAction Id="InstallRequestLoggingMachinConfig" Return="check" Execute="deferred" Impersonate="no" BinaryKey="SMRequestLogging.Setup.CustomActions.CA.dll" DllEntry="InstallRequestLoggingMachinConfig" />
+    <CustomAction Id="UninstallRequestLoggingMachinConfig" Return="check" Execute="deferred" Impersonate="no" BinaryKey="SMRequestLogging.Setup.CustomActions.CA.dll" DllEntry="UninstallRequestLoggingMachinConfig" />
+
+    <InstallExecuteSequence>
+      <Custom Action="InstallRequestLoggingMachinConfig" After="PublishProduct"  >
+        <![CDATA[&RequestLoggingMachineConfigFeature=3]]>
+      </Custom>
+      <Custom Action="UninstallRequestLoggingMachinConfig" After="MsiUnpublishAssemblies" >
+        (NOT UPGRADINGPRODUCTCODE) AND (REMOVE="ALL")
+      </Custom>
+    </InstallExecuteSequence>
+
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+		<MediaTemplate />
+
+		<Feature Id="AssemblyFeature" Title="Install service model logging assembly" Level="1" Absent="disallow">
+			<ComponentGroupRef Id="AssemblyComponents" />
+		</Feature>
+
+    <Feature Id="RequestLoggingMachineConfigFeature" Title="Register request logging in machine.config" Level="1"  />
+	</Product>
+
+	<Fragment>
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="ProgramFilesFolder">
+				<Directory Id="INSTALLFOLDER" Name="Service Model Logging" />
+			</Directory>
+		</Directory>
+	</Fragment>
+
+	<Fragment>
+		<ComponentGroup Id="AssemblyComponents" Directory="INSTALLFOLDER">
+      <Component Id="SMRequestLogging" Guid="EECD9D85-FE77-4615-93D7-1C96B9202ED3" Permanent="no">
+        <File Id="SMRequestLogging.dll" Name="$(var.SMRequestLogging.TargetFileName)" Source="$(var.SMRequestLogging.TargetPath)" KeyPath="yes" Vital="yes" Checksum="yes" Assembly=".net" AssemblyManifest="SMRequestLogging.dll" />
+      </Component>
+		</ComponentGroup>
+	</Fragment>
+</Wix>

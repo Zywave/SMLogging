@@ -112,10 +112,10 @@
     <value>2.0</value>
   </resheader>
   <resheader name="reader">
-    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyTargetken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <resheader name="writer">
-    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyTargetken=b77a5c561934e089</value>
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CallstackTraceToken" xml:space="preserve">
     <value>Callstack={0}</value>
@@ -131,6 +131,9 @@
   </data>
   <data name="LogicalOperationStackTraceToken" xml:space="preserve">
     <value>LogicalOperationStack={0}</value>
+  </data>
+  <data name="MissingRequiredAttribute" xml:space="preserve">
+    <value>The required attribute '{0}' is missing.</value>
   </data>
   <data name="ProcessIdTraceToken" xml:space="preserve">
     <value>ProcessId={0}</value>

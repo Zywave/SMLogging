@@ -96,7 +96,7 @@ namespace SMRequestLogging
 
             if (ShouldTrace(eventCache, source, eventType, id, null, null, data, null))
             {
-                string message = String.Empty;
+                var message = String.Empty;
                 if (data != null)
                 {
                     message = data.ToString();
@@ -120,10 +120,10 @@ namespace SMRequestLogging
 
             if (ShouldTrace(eventCache, source, eventType, id, null, null, null, data))
             {
-                StringBuilder builder = new StringBuilder();
+                var builder = new StringBuilder();
                 if (data != null)
                 {
-                    for (int i = 0; i < data.Length; i++)
+                    for (var i = 0; i < data.Length; i++)
                     {
                         if (i != 0)
                         {
@@ -187,7 +187,7 @@ namespace SMRequestLogging
 
             if (ShouldTrace(eventCache, source, eventType, id, format, args))
             {
-                string message = String.Empty;
+                var message = String.Empty;
                 if (args != null)
                 {
                     message = String.Format(CultureInfo.InvariantCulture, format, args);
@@ -212,7 +212,7 @@ namespace SMRequestLogging
         {
             WriteLine(FormatTrace(eventCache, source, eventType, id, message));
 
-            bool includeOptions = ((int)TraceOutputOptionsLevels & (int)eventType) != 0;
+            var includeOptions = ((int)TraceOutputOptionsLevels & (int)eventType) != 0;
             if (includeOptions && eventCache != null)
             {
                 IndentLevel++;
@@ -222,7 +222,7 @@ namespace SMRequestLogging
                 }
                 if ((TraceOptions.LogicalOperationStack & TraceOutputOptions) != TraceOptions.None)
                 {
-                    string stack = StringHelpers.Join(", ", eventCache.LogicalOperationStack.ToArray());
+                    var stack = StringHelpers.Join(", ", eventCache.LogicalOperationStack.ToArray());
                     WriteLine(String.Format(CultureInfo.InvariantCulture, AssemblyResources.LogicalOperationStackTraceToken, stack));
                 }
                 if ((TraceOptions.ThreadId & TraceOutputOptions) != TraceOptions.None)
@@ -252,7 +252,7 @@ namespace SMRequestLogging
         /// <param name="detailMessage">A detailed message to emit.</param>
         public override void Fail(string message, string detailMessage)
         {
-            StringBuilder builder = new StringBuilder();
+            var builder = new StringBuilder();
             builder.Append(AssemblyResources.TraceListenerFailed);
             builder.Append(" ");
             builder.Append(message);
@@ -295,8 +295,8 @@ namespace SMRequestLogging
         /// <returns>A formatted trace statement.</returns>
         protected virtual string FormatTrace(TraceEventCache eventCache, string source, TraceEventType eventType, int id, string message)
         {
-            Dictionary<string, object> namedArgs = new Dictionary<string, object>();
-            DateTime dateTime = eventCache != null ? eventCache.DateTime : DateTime.UtcNow;
+            var namedArgs = new Dictionary<string, object>();
+            var dateTime = eventCache != null ? eventCache.DateTime : DateTime.UtcNow;
             if (TimeZone != null)
             {
                 dateTime = TimeZoneInfo.ConvertTime(dateTime, TimeZone);
@@ -313,7 +313,7 @@ namespace SMRequestLogging
             namedArgs["LogicalOperationStack"] = String.Join(", ", Trace.CorrelationManager.LogicalOperationStack.ToArray());
             namedArgs["NewLine"] = Environment.NewLine;
 
-            string result = String.Empty;
+            var result = String.Empty;
 
             try
             {
@@ -383,12 +383,12 @@ namespace SMRequestLogging
         {
             _hasConfiguration = true;
 
-            List<string> supportedAttributes = new List<string>();
+            var supportedAttributes = new List<string>();
 
-            PropertyDescriptorCollection properties = TypeDescriptor.GetProperties(this);
+            var properties = TypeDescriptor.GetProperties(this);
             foreach (PropertyDescriptor property in properties)
             {
-                ConfigurationPropertyAttribute configurationPropertyAttribute = property.Attributes[typeof(ConfigurationPropertyAttribute)] as ConfigurationPropertyAttribute;
+                var configurationPropertyAttribute = property.Attributes[typeof(ConfigurationPropertyAttribute)] as ConfigurationPropertyAttribute;
                 if (configurationPropertyAttribute != null)
                 {
                     supportedAttributes.Add(configurationPropertyAttribute.Name);
@@ -433,26 +433,26 @@ namespace SMRequestLogging
         /// </summary>
         protected void ApplyConfiguration()
         {
-            FieldInfo fieldInfo = typeof(ConfigurationElement).GetField("s_nullPropertyValue", BindingFlags.Static | BindingFlags.NonPublic);
-            object nullValue = fieldInfo.GetValue(null);
+            var fieldInfo = typeof(ConfigurationElement).GetField("s_nullPropertyValue", BindingFlags.Static | BindingFlags.NonPublic);
+            var nullValue = fieldInfo.GetValue(null);
 
-            PropertyDescriptorCollection properties = TypeDescriptor.GetProperties(this);
+            var properties = TypeDescriptor.GetProperties(this);
             foreach (PropertyDescriptor property in properties)
             {
-                ConfigurationPropertyAttribute configurationPropertyAttribute = property.Attributes[typeof(ConfigurationPropertyAttribute)] as ConfigurationPropertyAttribute;
+                var configurationPropertyAttribute = property.Attributes[typeof(ConfigurationPropertyAttribute)] as ConfigurationPropertyAttribute;
 
                 if (configurationPropertyAttribute != null)
                 {
-                    string name = configurationPropertyAttribute.Name;
-                    object defaultValue = configurationPropertyAttribute.DefaultValue;
-                    bool isRequired = configurationPropertyAttribute.IsRequired;
+                    var name = configurationPropertyAttribute.Name;
+                    var defaultValue = configurationPropertyAttribute.DefaultValue;
+                    var isRequired = configurationPropertyAttribute.IsRequired;
                     object value = null;
 
                     if (!Attributes.ContainsKey(name))
                     {
                         if (isRequired)
                         {
-                            throw new ConfigurationErrorsException();
+                            throw new ConfigurationErrorsException(String.Format(CultureInfo.InvariantCulture, AssemblyResources.MissingRequiredAttribute, name));
                         }
                         else if (!defaultValue.Equals(nullValue))
                         {
@@ -466,7 +466,7 @@ namespace SMRequestLogging
 
                     if (value != null)
                     {
-                        TypeConverter converter = property.Converter;
+                        var converter = property.Converter;
                         if (converter != null)
                         {
                             value = converter.ConvertFrom(value);
