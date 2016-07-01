@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+	<Product Id="*" Name="Service Model Logging" Language="1033" Version="1.0.0.0" Manufacturer="Zywave" UpgradeCode="3123e40e-cd12-43f4-9a4c-33423c5c5deb">
+		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" InstallPrivileges="elevated" />
+
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+		<MediaTemplate EmbedCab="yes" />
+
+    <Property Id="RequestLoggingPathRoot" Value="%SystemDrive%\servicemodel\logs" />
+    <Property Id="RequestLoggingPath" Value="{AppName}\requests.{DateTime:yyMMdd}.log" />
+    <Property Id="RequestLoggingRollingMode" Value="DateTime" />
+    <Property Id="RequestLoggingRollingInterval" Value="Day"/>
+    <Property Id="RequestLoggingMaximumFileSize" Value="10485760" />
+    <Property Id="RequestLoggingMaximumFileIndex" Value="1" />
+    
+		<Feature Id="AssemblyFeature" Title="Install service model logging assembly" Level="1" Absent="disallow">
+			<ComponentGroupRef Id="AssemblyComponents" />
+		</Feature>
+    <Feature Id="RequestLoggingMachineConfigFeature" Title="Register request logging in machine.config" Level="1"  />
+    
+    <Binary Id="SMLogging.Setup.CustomActions.CA.dll" SourceFile="..\SMLogging.Setup.CustomActions\bin\$(var.Configuration)\SMLogging.Setup.CustomActions.CA.dll" />
+
+    <CustomAction Id="SetInstallRequestLoggingMachinConfigData" Property="InstallRequestLoggingMachinConfig" Value="RequestLoggingPathRoot=[RequestLoggingPathRoot];RequestLoggingPath=[RequestLoggingPath];RequestLoggingRollingMode=[RequestLoggingRollingMode];RequestLoggingRollingInterval=[RequestLoggingRollingInterval];RequestLoggingMaximumFileSize=[RequestLoggingMaximumFileSize];RequestLoggingMaximumFileIndex=[RequestLoggingMaximumFileIndex];" />
+    <CustomAction Id="InstallRequestLoggingMachinConfig" Return="check" Execute="deferred" Impersonate="no" BinaryKey="SMLogging.Setup.CustomActions.CA.dll" DllEntry="InstallRequestLoggingMachinConfig" />
+    <CustomAction Id="UninstallRequestLoggingMachinConfig" Return="check" Execute="deferred" Impersonate="no" BinaryKey="SMLogging.Setup.CustomActions.CA.dll" DllEntry="UninstallRequestLoggingMachinConfig" />
+
+    <InstallExecuteSequence>
+      <Custom Action="SetInstallRequestLoggingMachinConfigData" After="InstallInitialize"  >
+        <![CDATA[&RequestLoggingMachineConfigFeature=3]]>
+      </Custom>
+      <Custom Action="InstallRequestLoggingMachinConfig" After="PublishProduct"  >
+        <![CDATA[&RequestLoggingMachineConfigFeature=3]]>
+      </Custom>
+      <Custom Action="UninstallRequestLoggingMachinConfig" After="MsiUnpublishAssemblies" >
+        (NOT UPGRADINGPRODUCTCODE) AND (REMOVE="ALL")
+      </Custom>
+    </InstallExecuteSequence>
+
+	</Product>
+  
+	<Fragment>
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="ProgramFilesFolder">
+				<Directory Id="INSTALLFOLDER" Name="Service Model Logging" />
+			</Directory>
+		</Directory>
+	</Fragment>
+
+	<Fragment>
+		<ComponentGroup Id="AssemblyComponents" Directory="INSTALLFOLDER">
+      <Component Id="SMLogging" Guid="EECD9D85-FE77-4615-93D7-1C96B9202ED3" Permanent="no">
+        <File Id="SMLogging.dll" Name="$(var.SMLogging.TargetFileName)" Source="$(var.SMLogging.TargetPath)" KeyPath="yes" Vital="yes" Checksum="yes" Assembly=".net" AssemblyManifest="SMLogging.dll" />
+      </Component>
+		</ComponentGroup>
+	</Fragment>
+</Wix>
