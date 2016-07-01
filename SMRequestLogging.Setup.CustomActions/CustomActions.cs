@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Security.AccessControl;
+using System.Security.Principal;
 using System.Xml.Linq;
 using System.Xml.XPath;
 using Microsoft.Deployment.WindowsInstaller;
@@ -41,6 +43,10 @@ namespace SMRequestLogging.Setup.CustomActions
 
         private static void RegisterRequestLogging(string path, Session session)
         {
+            var data = session.CustomActionData;
+
+            session.Log($"**CUSTOMACTIONDATA = {session["CustomActionData"]}");
+
             if (!File.Exists(path))
             {
                 session.Log($"Machine.config file ({path}) not found");
@@ -60,14 +66,29 @@ namespace SMRequestLogging.Setup.CustomActions
             {
                 behaviorElement.Add(new XElement(RequestLoggingBehaviorName));
             }
-
+            
             var sourcesElement = GetOrAddElement(document.Root, "system.diagnostics", "sources");
             if (sourcesElement.XPathSelectElement($"source[@name='{RequestLoggingSourceName}']") == null)
             {
-                sourcesElement.Add(new XElement("source", new XAttribute("name", RequestLoggingSourceName), new XAttribute("switchValue", "Information")));
+                sourcesElement.Add(new XElement("source", 
+                    new XAttribute("name", RequestLoggingSourceName), 
+                    new XAttribute("switchValue", RequestLoggingSourceSwitchValue),
+                    new XElement("listeners", 
+                        new XElement("remove", 
+                            new XAttribute("name", "Default")),
+                        new XElement("add",
+                            new XAttribute("name", FileTraceListenerName),
+                            new XAttribute("type", BackgroundFileTraceListenerType),
+                            new XAttribute("initializeData", Path.Combine(data["RequestLoggingPathRoot"], data["RequestLoggingPath"])),
+                            new XAttribute("rollingMode", data["RequestLoggingRollingMode"]),
+                            new XAttribute("rollingInterval", data["RequestLoggingRollingInterval"]),
+                            new XAttribute("maximumFileSize", data["RequestLoggingMaximumFileSize"]),
+                            new XAttribute("maximumFileIndex", data["RequestLoggingMaximumFileIndex"])))));
             }
-
+            
             document.Save(path);
+            
+            SetupDirectory(data["RequestLoggingPathRoot"]);
         }
 
         private static void UnregisterRequestLogging(string path, Session session)
@@ -104,6 +125,16 @@ namespace SMRequestLogging.Setup.CustomActions
             return GetOrAddElement(element, names.Skip(1).ToArray());
         }
 
+        private static void SetupDirectory(string path)
+        {
+            path = Environment.ExpandEnvironmentVariables(path);
+
+            var directory = Directory.CreateDirectory(path);
+            var dac = directory.GetAccessControl();
+            dac.AddAccessRule(new FileSystemAccessRule(new SecurityIdentifier(WellKnownSidType.WorldSid, null), FileSystemRights.FullControl, InheritanceFlags.ObjectInherit | InheritanceFlags.ContainerInherit, PropagationFlags.NoPropagateInherit, AccessControlType.Allow));
+            directory.SetAccessControl(dac);
+        }
+
         private const string FrameworkVersion = @"v4.0.30319";
         private static readonly string WindowsPath = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
         private static readonly string MachineConfig32Path = Path.Combine(WindowsPath, "Microsoft.NET", "Framework", FrameworkVersion, "Config", "machine.config");
@@ -112,6 +143,10 @@ namespace SMRequestLogging.Setup.CustomActions
         private const string RequestLoggingBehaviorName = "requestLogging";
         private const string RequestLoggingBehaviorType = "SMRequestLogging.RequestLoggingBehaviorExtension, SMRequestLogging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=e8230e20520e9f79";
         private const string RequestLoggingSourceName = "System.ServiceModel.RequestLogging";
+        private const string RequestLoggingSourceSwitchValue = "Information";
+        private const string FileTraceListenerName = "File";
+        private const string BackgroundFileTraceListenerType = "SMRequestLogging.BackgroundFileTraceListener, SMRequestLogging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=e8230e20520e9f79";
+
 
     }
 }

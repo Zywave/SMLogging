@@ -500,6 +500,8 @@ namespace SMRequestLogging
 
         private static string GetFullPath(string path)
         {
+            path = Environment.ExpandEnvironmentVariables(path);
+
             if (path.StartsWithAny("~/", @"~\"))
             {
                 path = AppDomain.CurrentDomain.BaseDirectory + path.Substring(2);
@@ -518,12 +520,9 @@ namespace SMRequestLogging
             }
             namedArgs["DateTime"] = dateTime;
             namedArgs["Timestamp"] = DateTime.UtcNow.Ticks;
-            int processId;
-            using (var process = Process.GetCurrentProcess())
-            {
-                processId = process.Id;
-            }
-            namedArgs["ProcessId"] = processId;
+            namedArgs["ProcessId"] = _processId;
+            namedArgs["ProcessName"] = _processName;
+            namedArgs["AppName"] = _appName;
 
             return StringHelpers.NamedFormat(CultureInfo.InvariantCulture, path, namedArgs);
         }
@@ -666,6 +665,25 @@ namespace SMRequestLogging
         private FileLockHandlerBase _lockHandler;
         private FileLockStream _lockStream;
         private TextWriter _writer;
+
+        private static readonly int _processId;
+        private static readonly string _processName;
+        private static readonly string _appName;
+
+        static FileTraceListener()
+        {
+            using (var process = Process.GetCurrentProcess())
+            {
+                _processId = process.Id;
+                _processName = process.ProcessName;
+            }
+
+            _appName = AppDomain.CurrentDomain.FriendlyName;
+            if (_appName.StartsWith("/LM/W3SVC/"))
+            {
+                _appName = "W3SVC" + _appName.Split('/')[3];
+            }
+        }
 
         #endregion
     }

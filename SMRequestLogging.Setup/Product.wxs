@@ -3,12 +3,31 @@
 	<Product Id="*" Name="Service Model Logging" Language="1033" Version="1.0.0.0" Manufacturer="Zywave" UpgradeCode="3123e40e-cd12-43f4-9a4c-33423c5c5deb">
 		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" InstallPrivileges="elevated" />
 
+    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
+		<MediaTemplate EmbedCab="yes" />
+
+    <Property Id="RequestLoggingPathRoot" Value="%SystemDrive%\servicemodel\logs" />
+    <Property Id="RequestLoggingPath" Value="{AppName}\requests.{DateTime:yyMMdd}.log" />
+    <Property Id="RequestLoggingRollingMode" Value="DateTime" />
+    <Property Id="RequestLoggingRollingInterval" Value="Day"/>
+    <Property Id="RequestLoggingMaximumFileSize" Value="10485760" />
+    <Property Id="RequestLoggingMaximumFileIndex" Value="1" />
+    
+		<Feature Id="AssemblyFeature" Title="Install service model logging assembly" Level="1" Absent="disallow">
+			<ComponentGroupRef Id="AssemblyComponents" />
+		</Feature>
+    <Feature Id="RequestLoggingMachineConfigFeature" Title="Register request logging in machine.config" Level="1"  />
+    
     <Binary Id="SMRequestLogging.Setup.CustomActions.CA.dll" SourceFile="..\SMRequestLogging.Setup.CustomActions\bin\$(var.Configuration)\SMRequestLogging.Setup.CustomActions.CA.dll" />
 
+    <CustomAction Id="SetInstallRequestLoggingMachinConfigData" Property="InstallRequestLoggingMachinConfig" Value="RequestLoggingPathRoot=[RequestLoggingPathRoot];RequestLoggingPath=[RequestLoggingPath];RequestLoggingRollingMode=[RequestLoggingRollingMode];RequestLoggingRollingInterval=[RequestLoggingRollingInterval];RequestLoggingMaximumFileSize=[RequestLoggingMaximumFileSize];RequestLoggingMaximumFileIndex=[RequestLoggingMaximumFileIndex];" />
     <CustomAction Id="InstallRequestLoggingMachinConfig" Return="check" Execute="deferred" Impersonate="no" BinaryKey="SMRequestLogging.Setup.CustomActions.CA.dll" DllEntry="InstallRequestLoggingMachinConfig" />
     <CustomAction Id="UninstallRequestLoggingMachinConfig" Return="check" Execute="deferred" Impersonate="no" BinaryKey="SMRequestLogging.Setup.CustomActions.CA.dll" DllEntry="UninstallRequestLoggingMachinConfig" />
 
     <InstallExecuteSequence>
+      <Custom Action="SetInstallRequestLoggingMachinConfigData" After="InstallInitialize"  >
+        <![CDATA[&RequestLoggingMachineConfigFeature=3]]>
+      </Custom>
       <Custom Action="InstallRequestLoggingMachinConfig" After="PublishProduct"  >
         <![CDATA[&RequestLoggingMachineConfigFeature=3]]>
       </Custom>
@@ -17,16 +36,8 @@
       </Custom>
     </InstallExecuteSequence>
 
-    <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
-		<MediaTemplate />
-
-		<Feature Id="AssemblyFeature" Title="Install service model logging assembly" Level="1" Absent="disallow">
-			<ComponentGroupRef Id="AssemblyComponents" />
-		</Feature>
-
-    <Feature Id="RequestLoggingMachineConfigFeature" Title="Register request logging in machine.config" Level="1"  />
 	</Product>
-
+  
 	<Fragment>
 		<Directory Id="TARGETDIR" Name="SourceDir">
 			<Directory Id="ProgramFilesFolder">

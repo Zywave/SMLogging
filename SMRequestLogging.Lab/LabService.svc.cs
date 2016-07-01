@@ -6,7 +6,6 @@ namespace SMRequestLogging.Lab
     {
         public string GetData(int value)
         {
-            Thread.Sleep(10);
             return value.ToString();
         }
     }
