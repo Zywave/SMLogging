@@ -91,8 +91,6 @@ namespace SMLogging
                 var action = operationContext.IncomingMessageHeaders.Action;
 
                 _traceSource.TraceData(TraceEventType.Error, 0,
-                    dateTime.ToString("yyyy-MM-dd"),
-                    dateTime.ToString("HH:mm:ss.FFF"),
                     clientIpAddress,
                     _processName,
                     _serverName,

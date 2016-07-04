@@ -4,7 +4,7 @@ namespace SMLogging
 {
     internal class RequestTraceData
     {
-        public DateTimeOffset DateTime { get; set; }
+        public DateTimeOffset StartDateTime { get; set; }
 
         public string ClientIpAddress { get; set; }
 

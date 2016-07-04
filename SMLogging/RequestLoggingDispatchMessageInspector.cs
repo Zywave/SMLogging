@@ -31,7 +31,7 @@ namespace SMLogging
             
             return new RequestTraceData
             {
-                DateTime = DateTimeOffset.UtcNow,
+                StartDateTime = DateTimeOffset.UtcNow,
                 ClientIpAddress = remoteEndpoint?.Address,
                 Target = request.Headers.To,
                 Action = request.Headers.Action
@@ -52,8 +52,8 @@ namespace SMLogging
             var responseSize = Encoding.UTF8.GetByteCount(responseMessage);
 
             _traceSource.TraceData(TraceEventType.Information, 0,
-                requestTraceData.DateTime.ToString("yyyy-MM-dd"),
-                requestTraceData.DateTime.ToString("HH:mm:ss.FFF"),
+                requestTraceData.StartDateTime.ToString("yyyy-MM-dd"),
+                requestTraceData.StartDateTime.ToString("HH:mm:ss.FFF"),
                 requestTraceData.ClientIpAddress,
                 _processName,
                 _serverName,
@@ -66,7 +66,7 @@ namespace SMLogging
                 reply.IsFault ? 1 : 0, //TODO: Get better fault codes if possible
                 responseSize,
                 requestSize,
-                (DateTimeOffset.UtcNow - requestTraceData.DateTime).TotalMilliseconds
+                (DateTimeOffset.UtcNow - requestTraceData.StartDateTime).TotalMilliseconds
             );
         }
 
