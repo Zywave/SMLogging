@@ -11,6 +11,8 @@ namespace SMLogging.Setup.CustomActions
 {
     public class CustomActions
     {
+        #region Request Logging
+
         [CustomAction]
         public static ActionResult InstallRequestLoggingMachinConfig(Session session)
         {
@@ -108,6 +110,111 @@ namespace SMLogging.Setup.CustomActions
             document.Save(path);
         }
 
+        #endregion
+
+        #region Error Logging
+
+        [CustomAction]
+        public static ActionResult InstallErrorLoggingMachinConfig(Session session)
+        {
+            session.Log($"Begin {nameof(InstallErrorLoggingMachinConfig)}");
+
+            RegisterRequestLogging(MachineConfig32Path, session);
+            if (Environment.Is64BitOperatingSystem)
+            {
+                RegisterRequestLogging(MachineConfig64Path, session);
+            }
+
+            session.Log($"End {nameof(InstallErrorLoggingMachinConfig)}");
+            return ActionResult.Success;
+        }
+
+        [CustomAction]
+        public static ActionResult UninstallErrorLoggingMachinConfig(Session session)
+        {
+            session.Log($"Begin {nameof(InstallErrorLoggingMachinConfig)}");
+
+            UnregisterRequestLogging(MachineConfig32Path, session);
+            if (Environment.Is64BitOperatingSystem)
+            {
+                UnregisterRequestLogging(MachineConfig64Path, session);
+            }
+
+            session.Log($"End {nameof(InstallErrorLoggingMachinConfig)}");
+            return ActionResult.Success;
+        }
+
+        private static void RegisterErrorLogging(string path, Session session)
+        {
+            var data = session.CustomActionData;
+
+            session.Log($"**CUSTOMACTIONDATA = {session["CustomActionData"]}");
+
+            if (!File.Exists(path))
+            {
+                session.Log($"Machine.config file ({path}) not found");
+                return;
+            }
+
+            var document = XDocument.Load(path);
+
+            var behaviorExtensionsElement = GetOrAddElement(document.Root, "system.serviceModel", "extensions", "behaviorExtensions");
+            if (behaviorExtensionsElement.XPathSelectElement($"add[@name='{ErrorLoggingBehaviorName}']") == null)
+            {
+                behaviorExtensionsElement.Add(new XElement("add", new XAttribute("name", ErrorLoggingBehaviorName), new XAttribute("type", ErrorLoggingBehaviorType)));
+            }
+
+            var behaviorElement = GetOrAddElement(document.Root, "system.serviceModel", "behaviors", "serviceBehaviors", "behavior");
+            if (behaviorElement.Element(ErrorLoggingBehaviorName) == null)
+            {
+                behaviorElement.Add(new XElement(ErrorLoggingBehaviorName));
+            }
+
+            var sourcesElement = GetOrAddElement(document.Root, "system.diagnostics", "sources");
+            if (sourcesElement.XPathSelectElement($"source[@name='{ErrorLoggingSourceName}']") == null)
+            {
+                sourcesElement.Add(new XElement("source",
+                    new XAttribute("name", ErrorLoggingSourceName),
+                    new XAttribute("switchValue", ErrorLoggingSourceSwitchValue),
+                    new XElement("listeners",
+                        new XElement("remove",
+                            new XAttribute("name", "Default")),
+                        new XElement("add",
+                            new XAttribute("name", FileTraceListenerName),
+                            new XAttribute("type", BackgroundFileTraceListenerType),
+                            new XAttribute("initializeData", Path.Combine(data["ErrorLoggingPathRoot"], data["ErrorLoggingPath"])),
+                            new XAttribute("rollingMode", data["ErrorLoggingRollingMode"]),
+                            new XAttribute("rollingInterval", data["ErrorLoggingRollingInterval"]),
+                            new XAttribute("maximumFileSize", data["ErrorLoggingMaximumFileSize"]),
+                            new XAttribute("maximumFileIndex", data["ErrorLoggingMaximumFileIndex"])))));
+            }
+
+            document.Save(path);
+
+            SetupDirectory(data["ErrorLoggingPathRoot"]);
+        }
+
+        private static void UnregisterErrorLogging(string path, Session session)
+        {
+            if (!File.Exists(path))
+            {
+                session.Log($"Machine.config file ({path}) not found");
+                return;
+            }
+
+            var document = XDocument.Load(path);
+
+            document.Root?.XPathSelectElement($"system.serviceModel/extensions/behaviorExtensions/add[@name='{ErrorLoggingBehaviorName}']")?.Remove();
+            document.Root?.XPathSelectElement($"system.serviceModel/behaviors/serviceBehaviors/behavior/{ErrorLoggingBehaviorName}")?.Remove();
+            document.Root?.XPathSelectElement($"system.diagnostics/sources/source[@name='{ErrorLoggingSourceName}']")?.Remove();
+
+            document.Save(path);
+        }
+
+        #endregion
+
+        #region Helpers
+
         private static XElement GetOrAddElement(XElement parent, params string[] names)
         {
             if (names == null || names.Length == 0)
@@ -135,6 +242,10 @@ namespace SMLogging.Setup.CustomActions
             directory.SetAccessControl(dac);
         }
 
+        #endregion
+
+        #region Constants
+
         private const string FrameworkVersion = @"v4.0.30319";
         private static readonly string WindowsPath = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
         private static readonly string MachineConfig32Path = Path.Combine(WindowsPath, "Microsoft.NET", "Framework", FrameworkVersion, "Config", "machine.config");
@@ -144,9 +255,13 @@ namespace SMLogging.Setup.CustomActions
         private const string RequestLoggingBehaviorType = "SMLogging.RequestLoggingBehaviorExtension, SMLogging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=e8230e20520e9f79";
         private const string RequestLoggingSourceName = "System.ServiceModel.RequestLogging";
         private const string RequestLoggingSourceSwitchValue = "Information";
+        private const string ErrorLoggingBehaviorName = "errorLogging";
+        private const string ErrorLoggingBehaviorType = "SMLogging.ErrorLoggingBehaviorExtension, SMLogging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=e8230e20520e9f79";
+        private const string ErrorLoggingSourceName = "System.ServiceModel.ErrorLogging";
+        private const string ErrorLoggingSourceSwitchValue = "Error";
         private const string FileTraceListenerName = "File";
         private const string BackgroundFileTraceListenerType = "SMLogging.BackgroundFileTraceListener, SMLogging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=e8230e20520e9f79";
 
-
+        #endregion
     }
 }

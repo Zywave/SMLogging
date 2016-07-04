@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="BackgroundFileTraceListener.cs" />
     <Compile Include="EncodingConverter.cs" />
+    <Compile Include="ErrorLoggingBehavior.cs" />
     <Compile Include="ExclusiveFileLockHandler.cs" />
     <Compile Include="FileLockHandlerBase.cs" />
     <Compile Include="FileLockingMode.cs" />
@@ -63,6 +64,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>AssemblyResources.resx</DependentUpon>
     </Compile>
+    <Compile Include="ErrorLoggingBehaviorExtension.cs" />
     <Compile Include="RequestLoggingBehaviorExtension.cs" />
     <Compile Include="RequestLoggingDispatchMessageInspector.cs" />
     <Compile Include="RequestLoggingServiceBehavior.cs" />

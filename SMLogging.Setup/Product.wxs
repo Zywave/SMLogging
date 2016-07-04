@@ -12,17 +12,27 @@
     <Property Id="RequestLoggingRollingInterval" Value="Day"/>
     <Property Id="RequestLoggingMaximumFileSize" Value="10485760" />
     <Property Id="RequestLoggingMaximumFileIndex" Value="1" />
+    <Property Id="ErrorLoggingPathRoot" Value="%SystemDrive%\servicemodel\logs" />
+    <Property Id="ErrorLoggingPath" Value="{AppName}\errors.{DateTime:yyMMdd}.log" />
+    <Property Id="ErrorLoggingRollingMode" Value="DateTime" />
+    <Property Id="ErrorLoggingRollingInterval" Value="Day"/>
+    <Property Id="ErrorLoggingMaximumFileSize" Value="10485760" />
+    <Property Id="ErrorLoggingMaximumFileIndex" Value="1" />
     
 		<Feature Id="AssemblyFeature" Title="Install service model logging assembly" Level="1" Absent="disallow">
 			<ComponentGroupRef Id="AssemblyComponents" />
 		</Feature>
     <Feature Id="RequestLoggingMachineConfigFeature" Title="Register request logging in machine.config" Level="1"  />
+    <Feature Id="ErrorLoggingMachineConfigFeature" Title="Register error logging in machine.config" Level="1"  />
     
     <Binary Id="SMLogging.Setup.CustomActions.CA.dll" SourceFile="..\SMLogging.Setup.CustomActions\bin\$(var.Configuration)\SMLogging.Setup.CustomActions.CA.dll" />
 
     <CustomAction Id="SetInstallRequestLoggingMachinConfigData" Property="InstallRequestLoggingMachinConfig" Value="RequestLoggingPathRoot=[RequestLoggingPathRoot];RequestLoggingPath=[RequestLoggingPath];RequestLoggingRollingMode=[RequestLoggingRollingMode];RequestLoggingRollingInterval=[RequestLoggingRollingInterval];RequestLoggingMaximumFileSize=[RequestLoggingMaximumFileSize];RequestLoggingMaximumFileIndex=[RequestLoggingMaximumFileIndex];" />
     <CustomAction Id="InstallRequestLoggingMachinConfig" Return="check" Execute="deferred" Impersonate="no" BinaryKey="SMLogging.Setup.CustomActions.CA.dll" DllEntry="InstallRequestLoggingMachinConfig" />
     <CustomAction Id="UninstallRequestLoggingMachinConfig" Return="check" Execute="deferred" Impersonate="no" BinaryKey="SMLogging.Setup.CustomActions.CA.dll" DllEntry="UninstallRequestLoggingMachinConfig" />
+    <CustomAction Id="SetInstallErrorLoggingMachinConfigData" Property="InstallErrorLoggingMachinConfig" Value="ErrorLoggingPathRoot=[ErrorLoggingPathRoot];ErrorLoggingPath=[ErrorLoggingPath];ErrorLoggingRollingMode=[ErrorLoggingRollingMode];ErrorLoggingRollingInterval=[ErrorLoggingRollingInterval];ErrorLoggingMaximumFileSize=[ErrorLoggingMaximumFileSize];ErrorLoggingMaximumFileIndex=[ErrorLoggingMaximumFileIndex];" />
+    <CustomAction Id="InstallErrorLoggingMachinConfig" Return="check" Execute="deferred" Impersonate="no" BinaryKey="SMLogging.Setup.CustomActions.CA.dll" DllEntry="InstallErrorLoggingMachinConfig" />
+    <CustomAction Id="UninstallErrorLoggingMachinConfig" Return="check" Execute="deferred" Impersonate="no" BinaryKey="SMLogging.Setup.CustomActions.CA.dll" DllEntry="UninstallErrorLoggingMachinConfig" />
 
     <InstallExecuteSequence>
       <Custom Action="SetInstallRequestLoggingMachinConfigData" After="InstallInitialize"  >
@@ -32,6 +42,15 @@
         <![CDATA[&RequestLoggingMachineConfigFeature=3]]>
       </Custom>
       <Custom Action="UninstallRequestLoggingMachinConfig" After="MsiUnpublishAssemblies" >
+        (NOT UPGRADINGPRODUCTCODE) AND (REMOVE="ALL")
+      </Custom>
+      <Custom Action="SetInstallErrorLoggingMachinConfigData" After="InstallInitialize"  >
+        <![CDATA[&ErrorLoggingMachineConfigFeature=3]]>
+      </Custom>
+      <Custom Action="InstallErrorLoggingMachinConfig" After="PublishProduct"  >
+        <![CDATA[&ErrorLoggingMachineConfigFeature=3]]>
+      </Custom>
+      <Custom Action="UninstallErrorLoggingMachinConfig" After="MsiUnpublishAssemblies" >
         (NOT UPGRADINGPRODUCTCODE) AND (REMOVE="ALL")
       </Custom>
     </InstallExecuteSequence>

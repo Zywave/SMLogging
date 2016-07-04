@@ -11,6 +11,9 @@ namespace SMLogging
 {
     public class RequestLoggingDispatchMessageInspector : IDispatchMessageInspector
     {
+        /// <summary>
+        /// Initializes a new instance of the  <see cref="RequestLoggingDispatchMessageInspector"/> class.
+        /// </summary>
         public RequestLoggingDispatchMessageInspector()
         {
             _traceSource = new TraceSource("System.ServiceModel.RequestLogging");

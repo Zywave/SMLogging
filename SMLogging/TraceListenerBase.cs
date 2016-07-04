@@ -489,7 +489,7 @@ namespace SMLogging
         private bool _isInitialized = false;
         private static readonly object _initializeLock = new object();
 
-        private const string _defaultTraceFormat = "{Message}";
+        private const string _defaultTraceFormat = "{DateTime:yyyy-MM-dd} {DateTime:HH:mm:ss.FFF} {Message}";
         private const string _defaultTraceDataDelimiter = " ";
 
         #endregion
