@@ -72,10 +72,21 @@ namespace SMLogging
         /// </returns>
         public bool HandleError(Exception error)
         {
+            //Logging error from ProvideFault instead, so that operation context can be accessed.
+
+            return false;
+        }
+
+        /// <summary>
+        /// Enables the creation of a custom <see cref="System.ServiceModel.FaultException{T}" /> that is returned from an exception in the course of a service method.
+        /// </summary>
+        /// <param name="error">The <see cref="System.Exception" /> object thrown in the course of the service operation.</param>
+        /// <param name="version">The SOAP version of the message.</param>
+        /// <param name="fault">The <see cref="System.ServiceModel.Channels.Message" /> object that is returned to the client, or service, in the duplex case.</param>
+        public void ProvideFault(Exception error, MessageVersion version, ref Message fault)
+        {
             if (error != null)
             {
-                var dateTime = DateTimeOffset.UtcNow;
-
                 var context = OperationContext.Current;
 
                 var operationContext = OperationContext.Current;
@@ -102,18 +113,6 @@ namespace SMLogging
                     action,
                     error);
             }
-
-            return false;
-        }
-
-        /// <summary>
-        /// Enables the creation of a custom <see cref="System.ServiceModel.FaultException{T}" /> that is returned from an exception in the course of a service method.
-        /// </summary>
-        /// <param name="error">The <see cref="System.Exception" /> object thrown in the course of the service operation.</param>
-        /// <param name="version">The SOAP version of the message.</param>
-        /// <param name="fault">The <see cref="System.ServiceModel.Channels.Message" /> object that is returned to the client, or service, in the duplex case.</param>
-        public void ProvideFault(Exception error, MessageVersion version, ref Message fault)
-        {
         }
         
         private readonly TraceSource _traceSource;
