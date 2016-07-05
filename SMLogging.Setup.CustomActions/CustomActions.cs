@@ -119,10 +119,10 @@ namespace SMLogging.Setup.CustomActions
         {
             session.Log($"Begin {nameof(InstallErrorLoggingMachinConfig)}");
 
-            RegisterRequestLogging(MachineConfig32Path, session);
+            RegisterErrorLogging(MachineConfig32Path, session);
             if (Environment.Is64BitOperatingSystem)
             {
-                RegisterRequestLogging(MachineConfig64Path, session);
+                RegisterErrorLogging(MachineConfig64Path, session);
             }
 
             session.Log($"End {nameof(InstallErrorLoggingMachinConfig)}");
@@ -134,10 +134,10 @@ namespace SMLogging.Setup.CustomActions
         {
             session.Log($"Begin {nameof(InstallErrorLoggingMachinConfig)}");
 
-            UnregisterRequestLogging(MachineConfig32Path, session);
+            UnregisterErrorLogging(MachineConfig32Path, session);
             if (Environment.Is64BitOperatingSystem)
             {
-                UnregisterRequestLogging(MachineConfig64Path, session);
+                UnregisterErrorLogging(MachineConfig64Path, session);
             }
 
             session.Log($"End {nameof(InstallErrorLoggingMachinConfig)}");
