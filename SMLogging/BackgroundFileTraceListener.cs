@@ -99,8 +99,6 @@ namespace SMLogging
         /// </summary>
         public override void Flush()
         {
-            base.Flush();
-
             Event queuedEvent;
             var events = new List<Event>();
             while (events.Count < MaxFlushSize && _queue.TryDequeue(out queuedEvent))
@@ -132,6 +130,8 @@ namespace SMLogging
             {
                 StopBackgroundFlushing();
             }
+
+            base.Flush();
         }
 
         #endregion

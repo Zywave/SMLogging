@@ -277,7 +277,7 @@ namespace SMLogging
         /// </summary>
         public override void Close()
         {
-            Dispose(true);
+            Dispose();
         }
 
         #endregion

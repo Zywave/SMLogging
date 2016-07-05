@@ -210,14 +210,6 @@ namespace SMLogging
             }
         }
 
-        /// <summary>
-        /// Closes the trace listener.
-        /// </summary>
-        public override void Close()
-        {
-            Dispose();
-        }
-
         #endregion
 
         #region Protected Methods

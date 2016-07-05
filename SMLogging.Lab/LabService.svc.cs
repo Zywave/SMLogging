@@ -1,4 +1,4 @@
-﻿using System.Threading;
+﻿using System;
 
 namespace SMLogging.Lab
 {
@@ -6,6 +6,8 @@ namespace SMLogging.Lab
     {
         public string GetData(int value)
         {
+            throw new InvalidOperationException();
+
             return value.ToString();
         }
     }
