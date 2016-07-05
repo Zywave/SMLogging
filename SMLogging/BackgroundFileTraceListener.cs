@@ -7,6 +7,10 @@ using System.Threading.Tasks;
 
 namespace SMLogging
 {
+    /// <summary>
+    /// Represents a <see cref="FileTraceListener"/> that writes to files on a background thread.
+    /// </summary>
+    /// <seealso cref="FileTraceListener" />
     public class BackgroundFileTraceListener : FileTraceListener
     {
         #region Public Constructors

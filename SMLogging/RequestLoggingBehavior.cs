@@ -11,7 +11,7 @@ namespace SMLogging
     /// Represents a request logging service behavior that adds a message inspector to log service requests.
     /// </summary>
     [AttributeUsage(AttributeTargets.Class)]
-    public class RequestLoggingServiceBehavior : Attribute, IServiceBehavior
+    public class RequestLoggingBehavior : Attribute, IServiceBehavior
     {
         /// <summary>
         /// Provides the ability to pass custom data to binding elements to support the contract implementation.

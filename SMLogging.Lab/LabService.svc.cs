@@ -6,8 +6,6 @@ namespace SMLogging.Lab
     {
         public string GetData(int value)
         {
-            throw new InvalidOperationException();
-
             return value.ToString();
         }
     }
