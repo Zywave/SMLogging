@@ -252,15 +252,15 @@ namespace SMLogging.Setup.CustomActions
         private static readonly string MachineConfig64Path = Path.Combine(WindowsPath, "Microsoft.NET", "Framework64", FrameworkVersion, "Config", "machine.config");
 
         private const string RequestLoggingBehaviorName = "requestLogging";
-        private const string RequestLoggingBehaviorType = "SMLogging.RequestLoggingBehaviorExtension, SMLogging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=e8230e20520e9f79";
+        private const string RequestLoggingBehaviorType = "SMLogging.RequestLoggingBehaviorExtension, SMLogging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=ddc81ec55fc35caf";
         private const string RequestLoggingSourceName = "System.ServiceModel.RequestLogging";
         private const string RequestLoggingSourceSwitchValue = "Information";
         private const string ErrorLoggingBehaviorName = "errorLogging";
-        private const string ErrorLoggingBehaviorType = "SMLogging.ErrorLoggingBehaviorExtension, SMLogging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=e8230e20520e9f79";
+        private const string ErrorLoggingBehaviorType = "SMLogging.ErrorLoggingBehaviorExtension, SMLogging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=ddc81ec55fc35caf";
         private const string ErrorLoggingSourceName = "System.ServiceModel.ErrorLogging";
         private const string ErrorLoggingSourceSwitchValue = "Error";
         private const string FileTraceListenerName = "File";
-        private const string BackgroundFileTraceListenerType = "SMLogging.BackgroundFileTraceListener, SMLogging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=e8230e20520e9f79";
+        private const string BackgroundFileTraceListenerType = "SMLogging.BackgroundFileTraceListener, SMLogging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=ddc81ec55fc35caf";
 
         #endregion
     }
