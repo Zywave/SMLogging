@@ -16,15 +16,15 @@ namespace SMLogging.Lab.Client
             {
                 using (var service = new LabServiceProxy())
                 {
-                    //for (var i = 0; i < 1000; i++)
-                    //{
+                    for (var i = 0; i < 1000; i++)
+                    {
                         var sw1 = Stopwatch.StartNew();
                         
                         service.GetData(1);
                         
                         sw1.Stop();
                         Console.WriteLine($"Time taken: {sw1.ElapsedMilliseconds}");
-                    //}
+                    }
                 }
             };
 

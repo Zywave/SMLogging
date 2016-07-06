@@ -6,6 +6,8 @@ using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Dispatcher;
 using System.Text;
+using System.Text.RegularExpressions;
+using System.Xml.Linq;
 
 namespace SMLogging
 {
@@ -37,17 +39,20 @@ namespace SMLogging
             var operationContext = OperationContext.Current;
 
             RemoteEndpointMessageProperty remoteEndpoint = null;
-            if (operationContext.IncomingMessageProperties.ContainsKey(RemoteEndpointMessageProperty.Name))
+            if (operationContext?.IncomingMessageHeaders != null)
             {
-                remoteEndpoint = operationContext.IncomingMessageProperties[RemoteEndpointMessageProperty.Name] as RemoteEndpointMessageProperty;
+                if (operationContext.IncomingMessageProperties.ContainsKey(RemoteEndpointMessageProperty.Name))
+                {
+                    remoteEndpoint = operationContext.IncomingMessageProperties[RemoteEndpointMessageProperty.Name] as RemoteEndpointMessageProperty;
+                }
             }
-            
+
             return new RequestTraceData
             {
                 StartDateTime = DateTimeOffset.UtcNow,
                 ClientIpAddress = remoteEndpoint?.Address,
-                Target = request.Headers.To,
-                Action = request.Headers.Action
+                Target = request.Headers?.To,
+                Action = request.Headers?.Action
             };
         }
 
@@ -58,6 +63,7 @@ namespace SMLogging
         /// <param name="correlationState">The correlation object returned from the <see cref="M:System.ServiceModel.Dispatcher.IDispatchMessageInspector.AfterReceiveRequest(System.ServiceModel.Channels.Message@,System.ServiceModel.IClientChannel,System.ServiceModel.InstanceContext)" /> method.</param>
         public void BeforeSendReply(ref Message reply, object correlationState)
         {
+            var now = DateTimeOffset.UtcNow;
             var requestTraceData = (RequestTraceData)correlationState;
 
             var requestMessage = OperationContext.Current.RequestContext.RequestMessage.ToString();
@@ -72,20 +78,65 @@ namespace SMLogging
             _traceSource.TraceData(TraceEventType.Information, 0,
                 requestTraceData.StartDateTime.ToString("yyyy-MM-dd"),
                 requestTraceData.StartDateTime.ToString("HH:mm:ss.FFF"),
-                requestTraceData.ClientIpAddress,
+                requestTraceData.ClientIpAddress ?? "0.0.0.0",
                 _processName,
                 _serverName,
-                _serverIpAddress,
-                requestTraceData.Target.Scheme,
-                requestTraceData.Target.Host,
-                requestTraceData.Target.Port,
-                requestTraceData.Target,
-                requestTraceData.Action,
-                reply.IsFault ? 1 : 0, //TODO: Get better fault codes if possible
+                _serverIpAddress ?? "0.0.0.0",
+                requestTraceData.Target?.Scheme ?? "null",
+                requestTraceData.Target?.Host ?? "null",
+                requestTraceData.Target?.Port ?? 0,
+                requestTraceData.Target?.ToString() ?? "null",
+                requestTraceData.Action ?? "null",
+                reply.IsFault ? GetFaultCode(responseMessage) : "Success",
                 responseSize,
                 requestSize,
-                (DateTimeOffset.UtcNow - requestTraceData.StartDateTime).TotalMilliseconds
+                (now - requestTraceData.StartDateTime).TotalMilliseconds
             );
+        }
+
+        private static string GetFaultCode(string message)
+        {
+            var faultCode = "UnknownFault";
+
+            try
+            {
+                var document = XDocument.Parse(message);
+                var ns = document.Root?.Name.Namespace;
+                var faultCodeElement = document.Root?.Element(ns + "Body")?.Element(ns + "Fault")?.Element(ns + "Code");
+                if (faultCodeElement != null)
+                {
+                    faultCode = GetFaultCode(faultCodeElement);
+                }
+            }
+            catch
+            {
+                if (Debugger.IsAttached)
+                {
+                    throw;
+                }
+            }
+
+            return faultCode;
+        }
+
+        private static string GetFaultCode(XElement faultCodeElement)
+        {
+            var ns = faultCodeElement.Name.Namespace;
+            var code = faultCodeElement.Element(ns + "Value")?.Value;
+
+            if (code != null)
+            {
+                code = code.Substring(code.IndexOf(":", StringComparison.Ordinal) + 1);
+                code = Regex.Replace(code, @"\s+", "_");
+            }
+
+            var subFaultCodeElement = faultCodeElement.Element(ns + "Subcode");
+            if (subFaultCodeElement != null)
+            {
+                code += ":" + GetFaultCode(subFaultCodeElement);
+            }
+
+            return code;
         }
 
         private readonly TraceSource _traceSource;

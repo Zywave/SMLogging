@@ -87,30 +87,31 @@ namespace SMLogging
         {
             if (error != null)
             {
-                var context = OperationContext.Current;
-
                 var operationContext = OperationContext.Current;
 
                 RemoteEndpointMessageProperty remoteEndpoint = null;
-                if (operationContext.IncomingMessageProperties.ContainsKey(RemoteEndpointMessageProperty.Name))
+                if (operationContext?.IncomingMessageHeaders != null)
                 {
-                    remoteEndpoint = operationContext.IncomingMessageProperties[RemoteEndpointMessageProperty.Name] as RemoteEndpointMessageProperty;
+                    if (operationContext.IncomingMessageProperties.ContainsKey(RemoteEndpointMessageProperty.Name))
+                    {
+                        remoteEndpoint = operationContext.IncomingMessageProperties[RemoteEndpointMessageProperty.Name] as RemoteEndpointMessageProperty;
+                    }
                 }
 
                 var clientIpAddress = remoteEndpoint?.Address;
-                var target = operationContext.IncomingMessageHeaders.To;
-                var action = operationContext.IncomingMessageHeaders.Action;
+                var target = operationContext?.IncomingMessageHeaders?.To;
+                var action = operationContext?.IncomingMessageHeaders?.Action;
 
                 _traceSource.TraceData(TraceEventType.Error, 0,
-                    clientIpAddress,
+                    clientIpAddress ?? "0.0.0.0",
                     _processName,
                     _serverName,
-                    _serverIpAddress,
-                    target.Scheme,
-                    target.Host,
-                    target.Port,
-                    target,
-                    action,
+                    _serverIpAddress ?? "0.0.0.0",
+                    target?.Scheme ?? "null",
+                    target?.Host ?? "null",
+                    target?.Port ?? 0,
+                    target?.ToString() ?? "null",
+                    action ?? "null",
                     error);
             }
         }
