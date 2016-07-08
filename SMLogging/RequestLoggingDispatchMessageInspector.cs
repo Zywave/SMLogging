@@ -66,14 +66,26 @@ namespace SMLogging
             var now = DateTimeOffset.UtcNow;
             var requestTraceData = (RequestTraceData)correlationState;
 
-            var requestMessage = OperationContext.Current.RequestContext.RequestMessage.ToString();
-            var requestSize = Encoding.UTF8.GetByteCount(requestMessage);
+            var requestSize = 0;
+            var requestMessage = OperationContext.Current?.RequestContext?.RequestMessage?.ToString();
+            if (requestMessage != null)
+            {
+                requestSize = Encoding.UTF8.GetByteCount(requestMessage);
+            }
 
-            var bufferedCopy = reply.CreateBufferedCopy(int.MaxValue);
-            reply = bufferedCopy.CreateMessage();
-
-            var responseMessage = bufferedCopy.CreateMessage().ToString();
-            var responseSize = Encoding.UTF8.GetByteCount(responseMessage);
+            var responseSize = 0;
+            var faultCode = "Success";
+            if (reply != null)
+            {
+                var bufferedCopy = reply.CreateBufferedCopy(int.MaxValue);
+                reply = bufferedCopy.CreateMessage();
+                var responseMessage = bufferedCopy.CreateMessage().ToString();
+                responseSize = Encoding.UTF8.GetByteCount(responseMessage);
+                if (reply.IsFault)
+                {
+                    faultCode = GetFaultCode(responseMessage);
+                }
+            }
 
             _traceSource.TraceData(TraceEventType.Information, 0,
                 requestTraceData.StartDateTime.ToString("yyyy-MM-dd"),
@@ -87,7 +99,7 @@ namespace SMLogging
                 requestTraceData.Target?.Port ?? 0,
                 requestTraceData.Target?.ToString() ?? "null",
                 requestTraceData.Action ?? "null",
-                reply.IsFault ? GetFaultCode(responseMessage) : "Success",
+                faultCode,
                 responseSize,
                 requestSize,
                 (now - requestTraceData.StartDateTime).TotalMilliseconds
@@ -97,7 +109,7 @@ namespace SMLogging
         private static string GetFaultCode(string message)
         {
             var faultCode = "UnknownFault";
-
+            
             try
             {
                 var document = XDocument.Parse(message);
