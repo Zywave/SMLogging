@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>SMLogging</id>
+	<title>Service Model Logging</title>
+    <version>1.0.0</version>
+    <authors>Zywave</authors>
+	<projectUrl>https://github.com/Zywave/SMLogging</projectUrl>
+	<licenseUrl>https://raw.githubusercontent.com/Zywave/SMLogging/master/LICENSE</licenseUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>WCF (Service Model) request and error logging behaviors and trace listeners.</description>
+  </metadata>
+  <files>
+    <file src="SMLogging\bin\Release\SMLogging.*" target="lib" />
+  </files>
+</package>
