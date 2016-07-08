@@ -60,7 +60,7 @@ namespace SMLogging.Setup.CustomActions
             var behaviorExtensionsElement = GetOrAddElement(document.Root, "system.serviceModel", "extensions", "behaviorExtensions");
             if (behaviorExtensionsElement.XPathSelectElement($"add[@name='{RequestLoggingBehaviorName}']") == null)
             {
-                behaviorExtensionsElement.Add(new XElement("add", new XAttribute("name", RequestLoggingBehaviorName), new XAttribute("type", RequestLoggingBehaviorType)));
+                behaviorExtensionsElement.Add(new XElement("add", new XAttribute("name", RequestLoggingBehaviorName), new XAttribute("type", String.Format(RequestLoggingBehaviorTypeFormat, data["ProductVersion"]))));
             }
 
             var behaviorElement = GetOrAddElement(document.Root, "system.serviceModel", "behaviors", "serviceBehaviors", "behavior");
@@ -80,7 +80,7 @@ namespace SMLogging.Setup.CustomActions
                             new XAttribute("name", "Default")),
                         new XElement("add",
                             new XAttribute("name", FileTraceListenerName),
-                            new XAttribute("type", BackgroundFileTraceListenerType),
+                            new XAttribute("type", String.Format(BackgroundFileTraceListenerTypeFormat, data["ProductVersion"])),
                             new XAttribute("initializeData", Path.Combine(data["RequestLoggingPathRoot"], data["RequestLoggingPath"])),
                             new XAttribute("rollingMode", data["RequestLoggingRollingMode"]),
                             new XAttribute("rollingInterval", data["RequestLoggingRollingInterval"]),
@@ -161,7 +161,7 @@ namespace SMLogging.Setup.CustomActions
             var behaviorExtensionsElement = GetOrAddElement(document.Root, "system.serviceModel", "extensions", "behaviorExtensions");
             if (behaviorExtensionsElement.XPathSelectElement($"add[@name='{ErrorLoggingBehaviorName}']") == null)
             {
-                behaviorExtensionsElement.Add(new XElement("add", new XAttribute("name", ErrorLoggingBehaviorName), new XAttribute("type", ErrorLoggingBehaviorType)));
+                behaviorExtensionsElement.Add(new XElement("add", new XAttribute("name", ErrorLoggingBehaviorName), new XAttribute("type", String.Format(ErrorLoggingBehaviorTypeFormat, data["ProductVersion"]))));
             }
 
             var behaviorElement = GetOrAddElement(document.Root, "system.serviceModel", "behaviors", "serviceBehaviors", "behavior");
@@ -181,7 +181,7 @@ namespace SMLogging.Setup.CustomActions
                             new XAttribute("name", "Default")),
                         new XElement("add",
                             new XAttribute("name", FileTraceListenerName),
-                            new XAttribute("type", BackgroundFileTraceListenerType),
+                            new XAttribute("type", String.Format(BackgroundFileTraceListenerTypeFormat, data["ProductVersion"])),
                             new XAttribute("initializeData", Path.Combine(data["ErrorLoggingPathRoot"], data["ErrorLoggingPath"])),
                             new XAttribute("rollingMode", data["ErrorLoggingRollingMode"]),
                             new XAttribute("rollingInterval", data["ErrorLoggingRollingInterval"]),
@@ -252,15 +252,15 @@ namespace SMLogging.Setup.CustomActions
         private static readonly string MachineConfig64Path = Path.Combine(WindowsPath, "Microsoft.NET", "Framework64", FrameworkVersion, "Config", "machine.config");
 
         private const string RequestLoggingBehaviorName = "requestLogging";
-        private const string RequestLoggingBehaviorType = "SMLogging.RequestLoggingBehaviorExtension, SMLogging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=ddc81ec55fc35caf";
+        private const string RequestLoggingBehaviorTypeFormat = "SMLogging.RequestLoggingBehaviorExtension, SMLogging, Version={0}, Culture=neutral, PublicKeyToken=ddc81ec55fc35caf";
         private const string RequestLoggingSourceName = "System.ServiceModel.RequestLogging";
         private const string RequestLoggingSourceSwitchValue = "Information";
         private const string ErrorLoggingBehaviorName = "errorLogging";
-        private const string ErrorLoggingBehaviorType = "SMLogging.ErrorLoggingBehaviorExtension, SMLogging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=ddc81ec55fc35caf";
+        private const string ErrorLoggingBehaviorTypeFormat = "SMLogging.ErrorLoggingBehaviorExtension, SMLogging, Version={0}, Culture=neutral, PublicKeyToken=ddc81ec55fc35caf";
         private const string ErrorLoggingSourceName = "System.ServiceModel.ErrorLogging";
         private const string ErrorLoggingSourceSwitchValue = "Error";
         private const string FileTraceListenerName = "File";
-        private const string BackgroundFileTraceListenerType = "SMLogging.BackgroundFileTraceListener, SMLogging, Version=1.0.0.0, Culture=neutral, PublicKeyToken=ddc81ec55fc35caf";
+        private const string BackgroundFileTraceListenerTypeFormat = "SMLogging.BackgroundFileTraceListener, SMLogging, Version={0}, Culture=neutral, PublicKeyToken=ddc81ec55fc35caf";
 
         #endregion
     }
