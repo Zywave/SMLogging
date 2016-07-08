@@ -42,7 +42,7 @@
         <![CDATA[&RequestLoggingMachineConfigFeature=3]]>
       </Custom>
       <Custom Action="UninstallRequestLoggingMachinConfig" After="MsiUnpublishAssemblies" >
-        (NOT UPGRADINGPRODUCTCODE) AND (REMOVE="ALL")
+        REMOVE="ALL"
       </Custom>
       <Custom Action="SetInstallErrorLoggingMachinConfigData" After="InstallInitialize"  >
         <![CDATA[&ErrorLoggingMachineConfigFeature=3]]>
@@ -51,7 +51,7 @@
         <![CDATA[&ErrorLoggingMachineConfigFeature=3]]>
       </Custom>
       <Custom Action="UninstallErrorLoggingMachinConfig" After="MsiUnpublishAssemblies" >
-        (NOT UPGRADINGPRODUCTCODE) AND (REMOVE="ALL")
+        REMOVE="ALL"
       </Custom>
     </InstallExecuteSequence>
 
