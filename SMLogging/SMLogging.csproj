@@ -44,7 +44,6 @@
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.IdentityModel" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
@@ -85,14 +84,13 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Properties\SigningKey.pfx" />
     <None Include="Properties\SigningKey_Public.snk" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>IF $(ConfigurationName) == Release (
   REM SN_PATH variable and SigningKey.snk file provided by CI
-  "%25SN_PATH%25" -R "$(TargetPath)" "$(ProjectDir)Properties\SigningKey.snk"
+  "%25SN_PATH%25" -R "$(TargetPath)" "$(SolutionDir)SigningKey.snk"
 )</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

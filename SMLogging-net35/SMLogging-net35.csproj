@@ -1,0 +1,153 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{151C949D-8353-406C-B331-7C9FC06EF08F}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SMLogging</RootNamespace>
+    <AssemblyName>SMLogging</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <DelaySign>true</DelaySign>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>Properties\SigningKey_Public.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Threading, Version=1.0.2856.102, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\TaskParallelLibrary.1.0.2856.0\lib\Net35\System.Threading.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\SMLogging\BackgroundFileTraceListener.cs">
+      <Link>BackgroundFileTraceListener.cs</Link>
+    </Compile>
+    <Compile Include="..\SMLogging\EncodingConverter.cs">
+      <Link>EncodingConverter.cs</Link>
+    </Compile>
+    <Compile Include="..\SMLogging\ErrorLoggingBehavior.cs">
+      <Link>ErrorLoggingBehavior.cs</Link>
+    </Compile>
+    <Compile Include="..\SMLogging\ErrorLoggingBehaviorExtension.cs">
+      <Link>ErrorLoggingBehaviorExtension.cs</Link>
+    </Compile>
+    <Compile Include="..\SMLogging\ExclusiveFileLockHandler.cs">
+      <Link>ExclusiveFileLockHandler.cs</Link>
+    </Compile>
+    <Compile Include="..\SMLogging\FileLockHandlerBase.cs">
+      <Link>FileLockHandlerBase.cs</Link>
+    </Compile>
+    <Compile Include="..\SMLogging\FileLockingMode.cs">
+      <Link>FileLockingMode.cs</Link>
+    </Compile>
+    <Compile Include="..\SMLogging\FileLockStream.cs">
+      <Link>FileLockStream.cs</Link>
+    </Compile>
+    <Compile Include="..\SMLogging\FileRollingInterval.cs">
+      <Link>FileRollingInterval.cs</Link>
+    </Compile>
+    <Compile Include="..\SMLogging\FileRollingMode.cs">
+      <Link>FileRollingMode.cs</Link>
+    </Compile>
+    <Compile Include="..\SMLogging\FileTraceListener.cs">
+      <Link>FileTraceListener.cs</Link>
+    </Compile>
+    <Compile Include="..\SMLogging\MinimalFileLockHandler.cs">
+      <Link>MinimalFileLockHandler.cs</Link>
+    </Compile>
+    <Compile Include="..\SMLogging\MutexFileLockHandler.cs">
+      <Link>MutexFileLockHandler.cs</Link>
+    </Compile>
+    <Compile Include="..\SMLogging\Properties\AssemblyResources.Designer.cs">
+      <Link>Properties\AssemblyResources.Designer.cs</Link>
+      <DependentUpon>AssemblyResources.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="..\SMLogging\RequestLoggingBehavior.cs">
+      <Link>RequestLoggingBehavior.cs</Link>
+    </Compile>
+    <Compile Include="..\SMLogging\RequestLoggingBehaviorExtension.cs">
+      <Link>RequestLoggingBehaviorExtension.cs</Link>
+    </Compile>
+    <Compile Include="..\SMLogging\RequestLoggingDispatchMessageInspector.cs">
+      <Link>RequestLoggingDispatchMessageInspector.cs</Link>
+    </Compile>
+    <Compile Include="..\SMLogging\RequestTraceData.cs">
+      <Link>RequestTraceData.cs</Link>
+    </Compile>
+    <Compile Include="..\SMLogging\StringHelpers.cs">
+      <Link>StringHelpers.cs</Link>
+    </Compile>
+    <Compile Include="..\SMLogging\TimeZoneInfoConverter.cs">
+      <Link>TimeZoneInfoConverter.cs</Link>
+    </Compile>
+    <Compile Include="..\SMLogging\TraceListenerBase.cs">
+      <Link>TraceListenerBase.cs</Link>
+    </Compile>
+    <Compile Include="..\SMLogging\TraceSourceConverter.cs">
+      <Link>TraceSourceConverter.cs</Link>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\SMLogging\Properties\AssemblyResources.resx">
+      <Link>Properties\AssemblyResources.resx</Link>
+      <LastGenOutput>AssemblyResources.Designer.cs</LastGenOutput>
+      <Generator>ResXFileCodeGenerator</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="Properties\SigningKey_Public.snk" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>IF $(ConfigurationName) == Release (
+  REM SN_PATH variable and SigningKey.snk file provided by CI
+  "%25SN_PATH%25" -R "$(TargetPath)" "$(SolutionDir)SigningKey.snk"
+)</PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

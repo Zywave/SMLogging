@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Configuration;
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -310,7 +311,7 @@ namespace SMLogging
             namedArgs["ProcessId"] = eventCache != null ? eventCache.ProcessId : 0;
             namedArgs["ThreadId"] = eventCache != null ? eventCache.ThreadId : String.Empty;
             namedArgs["ActivityId"] = Trace.CorrelationManager.ActivityId;
-            namedArgs["LogicalOperationStack"] = String.Join(", ", Trace.CorrelationManager.LogicalOperationStack.ToArray());
+            namedArgs["LogicalOperationStack"] = String.Join(", ", Trace.CorrelationManager.LogicalOperationStack.ToArray().Select(s => s.ToString()).ToArray());
             namedArgs["NewLine"] = Environment.NewLine;
 
             var result = String.Empty;

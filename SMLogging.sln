@@ -9,6 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.gitignore = .gitignore
 		LICENSE = LICENSE
 		NuGet.nuspec = NuGet.nuspec
+		SigningKey.pfx = SigningKey.pfx
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SMLogging", "SMLogging\SMLogging.csproj", "{7A39F680-A620-4B15-AF44-56CF6E880A7F}"
@@ -20,6 +21,8 @@ EndProject
 Project("{930C7802-8A8C-48F9-8165-68863BCCD9DD}") = "SMLogging.Setup", "SMLogging.Setup\SMLogging.Setup.wixproj", "{D6309CC5-7512-44D1-AFA6-150D03D174BD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SMLogging.Setup.CustomActions", "SMLogging.Setup.CustomActions\SMLogging.Setup.CustomActions.csproj", "{9AB080BA-8C47-4DB9-AD1B-6404AC9E5C2C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SMLogging-net35", "SMLogging-net35\SMLogging-net35.csproj", "{151C949D-8353-406C-B331-7C9FC06EF08F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -69,6 +72,14 @@ Global
 		{9AB080BA-8C47-4DB9-AD1B-6404AC9E5C2C}.Release|Any CPU.Build.0 = Release|x86
 		{9AB080BA-8C47-4DB9-AD1B-6404AC9E5C2C}.Release|x86.ActiveCfg = Release|x86
 		{9AB080BA-8C47-4DB9-AD1B-6404AC9E5C2C}.Release|x86.Build.0 = Release|x86
+		{151C949D-8353-406C-B331-7C9FC06EF08F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{151C949D-8353-406C-B331-7C9FC06EF08F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{151C949D-8353-406C-B331-7C9FC06EF08F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{151C949D-8353-406C-B331-7C9FC06EF08F}.Debug|x86.Build.0 = Debug|Any CPU
+		{151C949D-8353-406C-B331-7C9FC06EF08F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{151C949D-8353-406C-B331-7C9FC06EF08F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{151C949D-8353-406C-B331-7C9FC06EF08F}.Release|x86.ActiveCfg = Release|Any CPU
+		{151C949D-8353-406C-B331-7C9FC06EF08F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -219,3 +219,6 @@ UpgradeLog*.htm
 
 # Microsoft Fakes
 FakesAssemblies/
+
+# Project specific files
+SigningKey.snk

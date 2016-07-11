@@ -18,10 +18,12 @@ namespace SMLogging.Setup.CustomActions
         {
             session.Log($"Begin {nameof(InstallRequestLoggingMachinConfig)}");
 
-            RegisterRequestLogging(MachineConfig32Path, session);
+            RegisterRequestLogging(MachineConfig32v2Path, session, false);
+            RegisterRequestLogging(MachineConfig32v4Path, session, true);
             if (Environment.Is64BitOperatingSystem)
             {
-                RegisterRequestLogging(MachineConfig64Path, session);
+                RegisterRequestLogging(MachineConfig64v2Path, session, false);
+                RegisterRequestLogging(MachineConfig64v4Path, session, true);
             }
 
             session.Log($"End {nameof(InstallRequestLoggingMachinConfig)}");
@@ -33,17 +35,19 @@ namespace SMLogging.Setup.CustomActions
         {
             session.Log($"Begin {nameof(InstallRequestLoggingMachinConfig)}");
 
-            UnregisterRequestLogging(MachineConfig32Path, session);
+            UnregisterRequestLogging(MachineConfig32v2Path, session, false);
+            UnregisterRequestLogging(MachineConfig32v4Path, session, true);
             if (Environment.Is64BitOperatingSystem)
             {
-                UnregisterRequestLogging(MachineConfig64Path, session);
+                UnregisterRequestLogging(MachineConfig64v2Path, session, false);
+                UnregisterRequestLogging(MachineConfig64v4Path, session, true);
             }
 
             session.Log($"End {nameof(InstallRequestLoggingMachinConfig)}");
             return ActionResult.Success;
         }
 
-        private static void RegisterRequestLogging(string path, Session session)
+        private static void RegisterRequestLogging(string path, Session session, bool includeDefaultBehavior)
         {
             var data = session.CustomActionData;
 
@@ -63,10 +67,13 @@ namespace SMLogging.Setup.CustomActions
                 behaviorExtensionsElement.Add(new XElement("add", new XAttribute("name", RequestLoggingBehaviorName), new XAttribute("type", String.Format(RequestLoggingBehaviorTypeFormat, data["ProductVersion"]))));
             }
 
-            var behaviorElement = GetOrAddElement(document.Root, "system.serviceModel", "behaviors", "serviceBehaviors", "behavior");
-            if (behaviorElement.Element(RequestLoggingBehaviorName) == null)
+            if (includeDefaultBehavior)
             {
-                behaviorElement.Add(new XElement(RequestLoggingBehaviorName));
+                var behaviorElement = GetOrAddElement(document.Root, "system.serviceModel", "behaviors", "serviceBehaviors", "behavior");
+                if (behaviorElement.Element(RequestLoggingBehaviorName) == null)
+                {
+                    behaviorElement.Add(new XElement(RequestLoggingBehaviorName));
+                }
             }
             
             var sourcesElement = GetOrAddElement(document.Root, "system.diagnostics", "sources");
@@ -93,7 +100,7 @@ namespace SMLogging.Setup.CustomActions
             SetupDirectory(data["RequestLoggingPathRoot"]);
         }
 
-        private static void UnregisterRequestLogging(string path, Session session)
+        private static void UnregisterRequestLogging(string path, Session session, bool includeDefaultBehavior)
         {
             if (!File.Exists(path))
             {
@@ -104,7 +111,10 @@ namespace SMLogging.Setup.CustomActions
             var document = XDocument.Load(path);
 
             document.Root?.XPathSelectElement($"system.serviceModel/extensions/behaviorExtensions/add[@name='{RequestLoggingBehaviorName}']")?.Remove(); 
-            document.Root?.XPathSelectElement($"system.serviceModel/behaviors/serviceBehaviors/behavior/{RequestLoggingBehaviorName}")?.Remove();
+            if (includeDefaultBehavior)
+            {
+                document.Root?.XPathSelectElement($"system.serviceModel/behaviors/serviceBehaviors/behavior/{RequestLoggingBehaviorName}")?.Remove();
+            }
             document.Root?.XPathSelectElement($"system.diagnostics/sources/source[@name='{RequestLoggingSourceName}']")?.Remove();
 
             document.Save(path);
@@ -119,10 +129,12 @@ namespace SMLogging.Setup.CustomActions
         {
             session.Log($"Begin {nameof(InstallErrorLoggingMachinConfig)}");
 
-            RegisterErrorLogging(MachineConfig32Path, session);
+            RegisterErrorLogging(MachineConfig32v2Path, session, false);
+            RegisterErrorLogging(MachineConfig32v4Path, session, true);
             if (Environment.Is64BitOperatingSystem)
             {
-                RegisterErrorLogging(MachineConfig64Path, session);
+                RegisterErrorLogging(MachineConfig64v2Path, session, false);
+                RegisterErrorLogging(MachineConfig64v4Path, session, true);
             }
 
             session.Log($"End {nameof(InstallErrorLoggingMachinConfig)}");
@@ -134,17 +146,19 @@ namespace SMLogging.Setup.CustomActions
         {
             session.Log($"Begin {nameof(InstallErrorLoggingMachinConfig)}");
 
-            UnregisterErrorLogging(MachineConfig32Path, session);
+            UnregisterErrorLogging(MachineConfig32v2Path, session, false);
+            UnregisterErrorLogging(MachineConfig32v4Path, session, true);
             if (Environment.Is64BitOperatingSystem)
             {
-                UnregisterErrorLogging(MachineConfig64Path, session);
+                UnregisterErrorLogging(MachineConfig64v2Path, session, false);
+                UnregisterErrorLogging(MachineConfig64v4Path, session, true);
             }
 
             session.Log($"End {nameof(InstallErrorLoggingMachinConfig)}");
             return ActionResult.Success;
         }
 
-        private static void RegisterErrorLogging(string path, Session session)
+        private static void RegisterErrorLogging(string path, Session session, bool includeDefaultBehavior)
         {
             var data = session.CustomActionData;
 
@@ -164,10 +178,13 @@ namespace SMLogging.Setup.CustomActions
                 behaviorExtensionsElement.Add(new XElement("add", new XAttribute("name", ErrorLoggingBehaviorName), new XAttribute("type", String.Format(ErrorLoggingBehaviorTypeFormat, data["ProductVersion"]))));
             }
 
-            var behaviorElement = GetOrAddElement(document.Root, "system.serviceModel", "behaviors", "serviceBehaviors", "behavior");
-            if (behaviorElement.Element(ErrorLoggingBehaviorName) == null)
+            if (includeDefaultBehavior)
             {
-                behaviorElement.Add(new XElement(ErrorLoggingBehaviorName));
+                var behaviorElement = GetOrAddElement(document.Root, "system.serviceModel", "behaviors", "serviceBehaviors", "behavior");
+                if (behaviorElement.Element(ErrorLoggingBehaviorName) == null)
+                {
+                    behaviorElement.Add(new XElement(ErrorLoggingBehaviorName));
+                }
             }
 
             var sourcesElement = GetOrAddElement(document.Root, "system.diagnostics", "sources");
@@ -194,7 +211,7 @@ namespace SMLogging.Setup.CustomActions
             SetupDirectory(data["ErrorLoggingPathRoot"]);
         }
 
-        private static void UnregisterErrorLogging(string path, Session session)
+        private static void UnregisterErrorLogging(string path, Session session, bool includeDefaultBehavior)
         {
             if (!File.Exists(path))
             {
@@ -205,7 +222,10 @@ namespace SMLogging.Setup.CustomActions
             var document = XDocument.Load(path);
 
             document.Root?.XPathSelectElement($"system.serviceModel/extensions/behaviorExtensions/add[@name='{ErrorLoggingBehaviorName}']")?.Remove();
-            document.Root?.XPathSelectElement($"system.serviceModel/behaviors/serviceBehaviors/behavior/{ErrorLoggingBehaviorName}")?.Remove();
+            if (includeDefaultBehavior)
+            {
+                document.Root?.XPathSelectElement($"system.serviceModel/behaviors/serviceBehaviors/behavior/{ErrorLoggingBehaviorName}")?.Remove();
+            }
             document.Root?.XPathSelectElement($"system.diagnostics/sources/source[@name='{ErrorLoggingSourceName}']")?.Remove();
 
             document.Save(path);
@@ -246,10 +266,11 @@ namespace SMLogging.Setup.CustomActions
 
         #region Constants
 
-        private const string FrameworkVersion = @"v4.0.30319";
         private static readonly string WindowsPath = Environment.GetFolderPath(Environment.SpecialFolder.Windows);
-        private static readonly string MachineConfig32Path = Path.Combine(WindowsPath, "Microsoft.NET", "Framework", FrameworkVersion, "Config", "machine.config");
-        private static readonly string MachineConfig64Path = Path.Combine(WindowsPath, "Microsoft.NET", "Framework64", FrameworkVersion, "Config", "machine.config");
+        private static readonly string MachineConfig32v2Path = Path.Combine(WindowsPath, @"Microsoft.NET\Framework\v2.0.50727\Config\machine.config");
+        private static readonly string MachineConfig64v2Path = Path.Combine(WindowsPath, @"Microsoft.NET\Framework64\v2.0.50727\Config\machine.config");
+        private static readonly string MachineConfig32v4Path = Path.Combine(WindowsPath, @"Microsoft.NET\Framework\v4.0.30319\Config\machine.config");
+        private static readonly string MachineConfig64v4Path = Path.Combine(WindowsPath, @"Microsoft.NET\Framework64\v4.0.30319\Config\machine.config");
 
         private const string RequestLoggingBehaviorName = "requestLogging";
         private const string RequestLoggingBehaviorTypeFormat = "SMLogging.RequestLoggingBehaviorExtension, SMLogging, Version={0}.0, Culture=neutral, PublicKeyToken=ddc81ec55fc35caf";

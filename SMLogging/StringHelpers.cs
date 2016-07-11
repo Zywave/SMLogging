@@ -353,7 +353,7 @@ namespace SMLogging
                         {
                             var argText = FormatToString(enumerator.Current, match.Groups["Format"].Value, provider, formatter);
                             var next = enumerator.MoveNext();
-                            if (!string.IsNullOrWhiteSpace(argText))
+                            if (!string.IsNullOrEmpty(argText))
                             {
                                 if (currentIndex == 0)
                                 {
@@ -474,7 +474,7 @@ namespace SMLogging
         {
             string result = null;
 
-            if (!String.IsNullOrWhiteSpace(format))
+            if (!String.IsNullOrEmpty(format))
             {
                 if (formatter != null)
                 {

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
-	<Product Id="*" Name="Service Model Logging" Language="1033" Version="1.0.0.0" Manufacturer="Zywave" UpgradeCode="3123e40e-cd12-43f4-9a4c-33423c5c5deb">
+	<Product Id="*" Name="Service Model Logging" Language="1033" Version="1.0.0" Manufacturer="Zywave" UpgradeCode="3123e40e-cd12-43f4-9a4c-33423c5c5deb">
 		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" InstallPrivileges="elevated" />
 
     <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." />
@@ -60,15 +60,24 @@
 	<Fragment>
 		<Directory Id="TARGETDIR" Name="SourceDir">
 			<Directory Id="ProgramFilesFolder">
-				<Directory Id="INSTALLFOLDER" Name="Service Model Logging" />
+        <Directory Id="INSTALLFOLDER" Name="Service Model Logging" >
+          <Directory Id="NET40FOLDER" Name="net40" />
+          <Directory Id="NET35FOLDER" Name="net35" />
+        </Directory>
 			</Directory>
 		</Directory>
 	</Fragment>
 
 	<Fragment>
-		<ComponentGroup Id="AssemblyComponents" Directory="INSTALLFOLDER">
-      <Component Id="SMLogging" Guid="EECD9D85-FE77-4615-93D7-1C96B9202ED3" Permanent="no">
-        <File Id="SMLogging.dll" Name="$(var.SMLogging.TargetFileName)" Source="$(var.SMLogging.TargetPath)" KeyPath="yes" Vital="yes" Checksum="yes" Assembly=".net" AssemblyManifest="SMLogging.dll" />
+		<ComponentGroup Id="AssemblyComponents" >
+      <Component Id="SMLogging" Guid="EECD9D85-FE77-4615-93D7-1C96B9202ED3" Directory="NET40FOLDER" Permanent="no">
+        <File Id="SMLogging.dll_net40_gac" Name="$(var.SMLogging.TargetFileName)" Source="$(var.SMLogging.TargetPath)" KeyPath="yes" Vital="yes" Checksum="yes" Assembly=".net" AssemblyManifest="SMLogging.dll_net40_gac" />
+      </Component>
+      <Component Id="SMLogging_net35" Guid="14ABEFAF-0C44-4EFF-86A5-D1B73DCFECC0" Directory="NET35FOLDER" Permanent="no">
+        <File Id="SMLogging.dll_net35_gac" Name="$(var.SMLogging-net35.TargetFileName)" Source="$(var.SMLogging-net35.TargetPath)" KeyPath="yes" Vital="yes" Checksum="yes" Assembly=".net" AssemblyManifest="SMLogging.dll_net35_gac" />
+       </Component>
+       <Component Id="TaskParallelLibrary_net35" Guid="82E60848-61B3-42DA-99F0-BE73FC894891" Directory="NET35FOLDER" Permanent="no">
+        <File Id="System.Threading.dll_net35_gac" Name="System.Threading.dll" Source="$(var.SMLogging-net35.TargetDir)System.Threading.dll" KeyPath="yes" Vital="yes" Checksum="yes" Assembly=".net" AssemblyManifest="System.Threading.dll_net35_gac" />
       </Component>
 		</ComponentGroup>
 	</Fragment>

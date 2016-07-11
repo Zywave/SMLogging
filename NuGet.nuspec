@@ -2,15 +2,23 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata>
     <id>SMLogging</id>
-	<title>Service Model Logging</title>
+	  <title>Service Model Logging</title>
     <version>1.0.0</version>
     <authors>Zywave</authors>
-	<projectUrl>https://github.com/Zywave/SMLogging</projectUrl>
-	<licenseUrl>https://raw.githubusercontent.com/Zywave/SMLogging/master/LICENSE</licenseUrl>
+	  <projectUrl>https://github.com/Zywave/SMLogging</projectUrl>
+	  <licenseUrl>https://raw.githubusercontent.com/Zywave/SMLogging/master/LICENSE</licenseUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>WCF (Service Model) request and error logging behaviors and trace listeners.</description>
+    <dependencies>
+      <group>
+      </group>
+      <group targetFramework="net35">
+        <dependency id="TaskParallelLibrary" version="1.0.2856.0" />
+      </group>
+    </dependencies>
   </metadata>
   <files>
-    <file src="SMLogging\bin\Release\SMLogging.*" target="lib" />
+    <file src="SMLogging\bin\Release\SMLogging.*" target="lib\net40" />
+    <file src="SMLogging-net35\bin\Release\SMLogging.*" target="lib\net35" />
   </files>
 </package>
