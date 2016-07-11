@@ -10,10 +10,10 @@
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>WCF (Service Model) request and error logging behaviors and trace listeners.</description>
     <dependencies>
-      <group>
-      </group>
       <group targetFramework="net35">
         <dependency id="TaskParallelLibrary" version="1.0.2856.0" />
+      </group>
+      <group targetFramework="net40">
       </group>
     </dependencies>
   </metadata>
