@@ -88,10 +88,10 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>rem IF $(ConfigurationName) == Release (
+    <PostBuildEvent>IF $(ConfigurationName) == Release (
   REM SN_PATH variable and SigningKey.snk file provided by CI
   "%25SN_PATH%25" -R "$(TargetPath)" "$(SolutionDir)SigningKey.snk"
-rem )</PostBuildEvent>
+)</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
