@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace SMLogging.Lab.Client
@@ -16,19 +17,20 @@ namespace SMLogging.Lab.Client
             {
                 using (var service = new LabServiceProxy())
                 {
-                    for (var i = 0; i < 1000; i++)
+                    while(true)
                     {
                         var sw1 = Stopwatch.StartNew();
                         
-                        service.GetData(1);
-                        
+                        service.DoSomething(1);
+
                         sw1.Stop();
                         Console.WriteLine($"Time taken: {sw1.ElapsedMilliseconds}");
+                        Console.ReadLine();
                     }
                 }
             };
 
-            Task.WaitAll(
+            //Task.WaitAll(
                 //Task.Factory.StartNew(action),
                 //Task.Factory.StartNew(action),
                 //Task.Factory.StartNew(action),
@@ -38,8 +40,10 @@ namespace SMLogging.Lab.Client
                 //Task.Factory.StartNew(action),
                 //Task.Factory.StartNew(action),
                 //Task.Factory.StartNew(action),
-                Task.Factory.StartNew(action)
-            );
+                //Task.Factory.StartNew(action)
+            //);
+
+            action();
 
             sw.Stop();
             Console.WriteLine($"Total time taken: {sw.ElapsedMilliseconds}");

@@ -62,7 +62,7 @@ namespace SMLogging
         /// Gets or sets the maximum size of a flush.
         /// </summary>
         /// <remarks>
-        /// This value specifies the maximum number of events to flush to the file. The default value is 100.
+        /// This value specifies the maximum number of events to flush to the file. The default value is 1000.
         /// </remarks>
         [ConfigurationProperty("maxFlushSize")]
         public int MaxFlushSize { get; set; }

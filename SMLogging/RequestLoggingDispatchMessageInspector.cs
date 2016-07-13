@@ -47,12 +47,20 @@ namespace SMLogging
                 }
             }
 
+            var requestSize = 0;
+            var requestMessage = request?.ToString();
+            if (requestMessage != null)
+            {
+                requestSize = Encoding.UTF8.GetByteCount(requestMessage);
+            }
+
             return new RequestTraceData
             {
-                StartDateTime = DateTimeOffset.UtcNow,
                 ClientIpAddress = remoteEndpoint?.Address,
-                Target = request.Headers?.To,
-                Action = request.Headers?.Action
+                Target = request?.Headers?.To,
+                Action = request?.Headers?.Action,
+                RequestSize = requestSize,
+                StartDateTime = DateTimeOffset.UtcNow
             };
         }
 
@@ -63,16 +71,9 @@ namespace SMLogging
         /// <param name="correlationState">The correlation object returned from the <see cref="M:System.ServiceModel.Dispatcher.IDispatchMessageInspector.AfterReceiveRequest(System.ServiceModel.Channels.Message@,System.ServiceModel.IClientChannel,System.ServiceModel.InstanceContext)" /> method.</param>
         public void BeforeSendReply(ref Message reply, object correlationState)
         {
-            var now = DateTimeOffset.UtcNow;
+            var endDateTime = DateTimeOffset.UtcNow;
             var requestTraceData = (RequestTraceData)correlationState;
-
-            var requestSize = 0;
-            var requestMessage = OperationContext.Current?.RequestContext?.RequestMessage?.ToString();
-            if (requestMessage != null)
-            {
-                requestSize = Encoding.UTF8.GetByteCount(requestMessage);
-            }
-
+            
             var responseSize = 0;
             var faultCode = "Success";
             if (reply != null)
@@ -101,8 +102,8 @@ namespace SMLogging
                 requestTraceData.Action ?? "null",
                 faultCode,
                 responseSize,
-                requestSize,
-                (now - requestTraceData.StartDateTime).TotalMilliseconds
+                requestTraceData.RequestSize,
+                (endDateTime - requestTraceData.StartDateTime).TotalMilliseconds
             );
         }
 

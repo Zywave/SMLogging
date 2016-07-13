@@ -11,5 +11,7 @@ namespace SMLogging
         public Uri Target { get; set; }
 
         public string Action { get; set; }
+
+        public int RequestSize { get; set; }
     }
 }

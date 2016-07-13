@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ServiceModel;
+using System.Threading.Tasks;
 
 namespace SMLogging.Lab
 {
@@ -8,6 +9,16 @@ namespace SMLogging.Lab
         public string GetData(int value)
         {
             return value.ToString();
+        }
+
+        public Task<string> GetData2(int value)
+        {
+            return Task.FromResult(value.ToString());
+        }
+
+        public void DoSomething(int value)
+        {
+            
         }
     }
 }
