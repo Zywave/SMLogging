@@ -60,6 +60,9 @@ namespace SMLogging
         /// <param name="serviceHostBase">The host that is currently being built.</param>
         public void ApplyDispatchBehavior(ServiceDescription serviceDescription, ServiceHostBase serviceHostBase)
         {
+            if (serviceDescription == null) throw new ArgumentNullException(nameof(serviceDescription));
+            if (serviceHostBase == null) throw new ArgumentNullException(nameof(serviceHostBase));
+
             if (Enabled)
             {
                 for (var i = 0; i < serviceHostBase.ChannelDispatchers.Count; i++)

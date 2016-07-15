@@ -53,6 +53,7 @@
     <Compile Include="BackgroundFileTraceListener.cs" />
     <Compile Include="EncodingConverter.cs" />
     <Compile Include="ErrorLoggingBehavior.cs" />
+    <Compile Include="ErrorLoggingErrorHandler.cs" />
     <Compile Include="ExclusiveFileLockHandler.cs" />
     <Compile Include="FileLockHandlerBase.cs" />
     <Compile Include="FileLockingMode.cs" />
@@ -89,10 +90,10 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>IF $(ConfigurationName) == Release (
+    <PostBuildEvent>rem IF $(ConfigurationName) == Release (
   REM SN_PATH variable and SigningKey.snk file provided by CI
   "%25SN_PATH%25" -R "$(TargetPath)" "$(SolutionDir)SigningKey.snk"
-)</PostBuildEvent>
+rem )</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

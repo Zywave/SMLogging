@@ -67,6 +67,9 @@
     <Compile Include="..\SMLogging\ErrorLoggingBehaviorExtension.cs">
       <Link>ErrorLoggingBehaviorExtension.cs</Link>
     </Compile>
+    <Compile Include="..\SMLogging\ErrorLoggingErrorHandler.cs">
+      <Link>ErrorLoggingErrorHandler.cs</Link>
+    </Compile>
     <Compile Include="..\SMLogging\ExclusiveFileLockHandler.cs">
       <Link>ExclusiveFileLockHandler.cs</Link>
     </Compile>

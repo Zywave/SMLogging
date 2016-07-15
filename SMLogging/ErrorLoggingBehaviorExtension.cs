@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.ServiceModel.Configuration;
 
 namespace SMLogging
@@ -17,7 +18,7 @@ namespace SMLogging
         /// </returns>
         protected override object CreateBehavior()
         {
-            return new ErrorLoggingBehavior();
+            return new ErrorLoggingBehavior(Enabled);
         }
 
         /// <summary>
@@ -26,6 +27,16 @@ namespace SMLogging
         public override Type BehaviorType
         {
             get { return typeof(ErrorLoggingBehavior); }
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the behavior is enabled.
+        /// </summary>
+        [ConfigurationProperty("enabled", DefaultValue = true)]
+        public bool Enabled
+        {
+            get { return (bool)this["enabled"]; }
+            set { this["enabled"] = value; }
         }
     }
 }
