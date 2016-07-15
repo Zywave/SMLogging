@@ -19,15 +19,16 @@ namespace SMLogging
         /// Initializes a new instance of the <see cref="RequestLoggingBehavior"/> class.
         /// </summary>
         public RequestLoggingBehavior()
-            : this(true, false)
+            : this(true, false, true)
         {
             
         }
 
-        internal RequestLoggingBehavior(bool enabled, bool createBufferedMessageCopy)
+        internal RequestLoggingBehavior(bool enabled, bool createBufferedMessageCopy, bool addMessageIdRequestHeader)
         {
             Enabled = enabled;
             CreateBufferedMessageCopy = createBufferedMessageCopy;
+            AddMessageIdRequestHeader = addMessageIdRequestHeader;
         }
 
         /// <summary>
@@ -39,6 +40,11 @@ namespace SMLogging
         /// Gets or sets a value indicating whether to buffer the entire request and response messages in memory to get full message sizes and fault codes of streamed messages.
         /// </summary>
         public bool CreateBufferedMessageCopy { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the client should add a message ID request header when it is not avaiable.
+        /// </summary>
+        public bool AddMessageIdRequestHeader { get; set; }
 
         #region IServiceBehavior Implementation
 
@@ -141,7 +147,8 @@ namespace SMLogging
         {
             return new RequestLoggingMessageInspector
             {
-                CreateBufferedMessageCopy = CreateBufferedMessageCopy
+                CreateBufferedMessageCopy = CreateBufferedMessageCopy,
+                AddMessageIdRequestHeader = AddMessageIdRequestHeader
             };
         }
     }

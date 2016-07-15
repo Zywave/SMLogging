@@ -34,6 +34,11 @@ namespace SMLogging
         public bool CreateBufferedMessageCopy { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether the client should add a message ID request header when it is not avaiable.
+        /// </summary>
+        public bool AddMessageIdRequestHeader { get; set; }
+
+        /// <summary>
         /// Gets the trace source.
         /// </summary>
         public TraceSource TraceSource { get; }
@@ -158,7 +163,7 @@ namespace SMLogging
             
             if (request != null)
             {
-                if (request.Headers.MessageId == null)
+                if (AddMessageIdRequestHeader && request.Headers.MessageId == null)
                 {
                     request.Headers.MessageId = new UniqueId(Guid.NewGuid());
                 }
