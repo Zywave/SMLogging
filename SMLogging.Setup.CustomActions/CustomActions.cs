@@ -69,10 +69,16 @@ namespace SMLogging.Setup.CustomActions
 
             if (includeDefaultBehavior)
             {
-                var behaviorElement = GetOrAddElement(document.Root, "system.serviceModel", "behaviors", "serviceBehaviors", "behavior");
-                if (behaviorElement.Element(RequestLoggingBehaviorName) == null)
+                var serviceBehaviorElement = GetOrAddElement(document.Root, "system.serviceModel", "behaviors", "serviceBehaviors", "behavior");
+                if (serviceBehaviorElement.Element(RequestLoggingBehaviorName) == null)
                 {
-                    behaviorElement.Add(new XElement(RequestLoggingBehaviorName));
+                    serviceBehaviorElement.Add(new XElement(RequestLoggingBehaviorName));
+                }
+
+                var endpointBehaviorElement = GetOrAddElement(document.Root, "system.serviceModel", "behaviors", "endpointBehaviors", "behavior");
+                if (endpointBehaviorElement.Element(RequestLoggingBehaviorName) == null)
+                {
+                    endpointBehaviorElement.Add(new XElement(RequestLoggingBehaviorName));
                 }
             }
             
