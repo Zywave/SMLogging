@@ -5,6 +5,7 @@ using System.Net.Sockets;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Dispatcher;
+using System.Xml;
 
 namespace SMLogging
 {
@@ -64,15 +65,17 @@ namespace SMLogging
                     }
                 }
 
+                var messageId = GetMessageId(operationContext?.IncomingMessageHeaders?.MessageId);
                 var clientIpAddress = remoteEndpoint?.Address;
                 var target = operationContext?.IncomingMessageHeaders?.To;
                 var action = operationContext?.IncomingMessageHeaders?.Action;
 
                 TraceSource.TraceData(TraceEventType.Error, 0,
+                    messageId ?? "null",
                     clientIpAddress ?? "0.0.0.0",
-                    _processName,
-                    _serverName,
-                    _serverIpAddress ?? "0.0.0.0",
+                    _applicationName,
+                    _machineName,
+                    _machineIpAddress ?? "0.0.0.0",
                     target?.Scheme ?? "null",
                     target?.Host ?? "null",
                     target?.Port ?? 0,
@@ -82,25 +85,41 @@ namespace SMLogging
             }
         }
 
-        private static readonly string _serverName;
-        private static readonly string _serverIpAddress;
-        private static readonly string _processName;
+        private static string GetMessageId(UniqueId messageUniqueId)
+        {
+            if (messageUniqueId != null)
+            {
+                Guid messageGuid;
+                if (messageUniqueId.TryGetGuid(out messageGuid))
+                {
+                    return messageGuid.ToString();
+                }
+
+                return messageUniqueId.ToString();
+            }
+
+            return null;
+        }
+
+        private static readonly string _machineName;
+        private static readonly string _machineIpAddress;
+        private static readonly string _applicationName;
 
         static ErrorLoggingErrorHandler()
         {
-            _serverName = Dns.GetHostName();
+            _machineName = Dns.GetHostName();
 
             var host = Dns.GetHostEntry(Dns.GetHostName());
             foreach (var ip in host.AddressList)
             {
                 if (ip.AddressFamily == AddressFamily.InterNetwork)
                 {
-                    _serverIpAddress = ip.ToString();
+                    _machineIpAddress = ip.ToString();
                     break; ;
                 }
             }
 
-            _processName = AppDomain.CurrentDomain.FriendlyName;
+            _applicationName = AppDomain.CurrentDomain.FriendlyName;
         }
     }
 }
