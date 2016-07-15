@@ -44,6 +44,7 @@
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
@@ -69,8 +70,8 @@
     </Compile>
     <Compile Include="ErrorLoggingBehaviorExtension.cs" />
     <Compile Include="RequestLoggingBehaviorExtension.cs" />
-    <Compile Include="RequestLoggingDispatchMessageInspector.cs" />
     <Compile Include="RequestLoggingBehavior.cs" />
+    <Compile Include="RequestLoggingMessageInspector.cs" />
     <Compile Include="RequestTraceData.cs" />
     <Compile Include="StringHelpers.cs" />
     <Compile Include="TimeZoneInfoConverter.cs" />

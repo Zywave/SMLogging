@@ -43,6 +43,7 @@
     <Reference Include="System" />
     <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
     <Reference Include="System.Threading, Version=1.0.2856.102, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\TaskParallelLibrary.1.0.2856.0\lib\Net35\System.Threading.dll</HintPath>
@@ -105,8 +106,8 @@
     <Compile Include="..\SMLogging\RequestLoggingBehaviorExtension.cs">
       <Link>RequestLoggingBehaviorExtension.cs</Link>
     </Compile>
-    <Compile Include="..\SMLogging\RequestLoggingDispatchMessageInspector.cs">
-      <Link>RequestLoggingDispatchMessageInspector.cs</Link>
+    <Compile Include="..\SMLogging\RequestLoggingMessageInspector.cs">
+      <Link>RequestLoggingMessageInspector.cs</Link>
     </Compile>
     <Compile Include="..\SMLogging\RequestTraceData.cs">
       <Link>RequestTraceData.cs</Link>

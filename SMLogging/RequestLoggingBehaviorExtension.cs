@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.ServiceModel.Configuration;
 
 namespace SMLogging
@@ -18,7 +19,7 @@ namespace SMLogging
         /// </returns>
         protected override object CreateBehavior()
         {
-            return new RequestLoggingBehavior();
+            return new RequestLoggingBehavior(Enabled, CreateBufferedMessageCopy);
         }
 
         /// <summary>
@@ -27,6 +28,26 @@ namespace SMLogging
         public override Type BehaviorType
         {
             get { return typeof(RequestLoggingBehavior); }
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the behavior is enabled.
+        /// </summary>
+        [ConfigurationProperty("enabled", DefaultValue = true)]
+        public bool Enabled
+        {
+            get { return (bool)this["enabled"]; }
+            set { this["enabled"] = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether to buffer the entire request and response messages in memory to get full message sizes and fault codes of streamed messages.
+        /// </summary>
+        [ConfigurationProperty("createBufferedMessageCopy", DefaultValue = false)]
+        public bool CreateBufferedMessageCopy
+        {
+            get { return (bool)this["createBufferedMessageCopy"]; }
+            set { this["createBufferedMessageCopy"] = value; }
         }
     }
 }

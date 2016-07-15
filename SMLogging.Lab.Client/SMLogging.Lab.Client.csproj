@@ -58,6 +58,10 @@
       <Project>{d8c05e87-df5e-487b-a5f5-d8993c980542}</Project>
       <Name>SMLogging.Lab</Name>
     </ProjectReference>
+    <ProjectReference Include="..\SMLogging\SMLogging.csproj">
+      <Project>{7a39f680-a620-4b15-af44-56cf6e880a7f}</Project>
+      <Name>SMLogging</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

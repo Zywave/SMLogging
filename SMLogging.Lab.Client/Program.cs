@@ -15,13 +15,16 @@ namespace SMLogging.Lab.Client
 
             Action action = () =>
             {
+                //using (var service = new StreamingLabServiceProxy())
                 using (var service = new LabServiceProxy())
                 {
-                    while(true)
+                    while (true)
                     {
                         var sw1 = Stopwatch.StartNew();
-                        
+
+                        //var r = service.GetData(new StreamingRequest() {Value = 1});
                         service.DoSomething(1);
+
 
                         sw1.Stop();
                         Console.WriteLine($"Time taken: {sw1.ElapsedMilliseconds}");
