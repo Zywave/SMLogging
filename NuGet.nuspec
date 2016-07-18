@@ -7,6 +7,7 @@
     <authors>Zywave</authors>
 	  <projectUrl>https://github.com/Zywave/SMLogging</projectUrl>
 	  <licenseUrl>https://raw.githubusercontent.com/Zywave/SMLogging/master/LICENSE</licenseUrl>
+    <releaseNotes>https://github.com/SMLogging/releases</releaseNotes>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>WCF (Service Model) request and error logging behaviors and trace listeners.</description>
     <dependencies>
