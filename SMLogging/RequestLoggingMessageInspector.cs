@@ -88,7 +88,7 @@ namespace SMLogging
                 
                 data.RequestSize = Encoding.UTF8.GetByteCount(requestContent);
 
-                data.IsOneWay = request.Headers.ReplyTo == null;
+                data.IsOneWay = request.Headers.Action != null && request.Headers.ReplyTo == null;
             }
 
             data.StartDateTime = DateTimeOffset.UtcNow;
@@ -185,7 +185,7 @@ namespace SMLogging
 
                 data.RequestSize = Encoding.UTF8.GetByteCount(requestContent);
 
-                data.IsOneWay = request.Headers.ReplyTo == null;
+                data.IsOneWay = request.Headers.Action != null && request.Headers.ReplyTo == null;
             }
 
             if (channel != null)
