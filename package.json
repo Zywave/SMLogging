@@ -1,6 +1,6 @@
 {
   "name": "SMLogging",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "private": true,
   "repository": {
     "type": "git",
@@ -18,5 +18,9 @@
     "gulp-util": "^3.0.7",
     "gulp-xmlpoke": "^0.2.0",
     "run-sequence": "^1.1.5"
+  },
+  "dependencies": {
+    "gulp-dotnet-assembly-info": "^0.1.11",
+    "gulp-replace": "^0.5.4"
   }
 }

@@ -1,10 +1,5 @@
 version: '{build}'
 configuration: Release
-init:
-- ps: >-
-    If ($env:APPVEYOR_REPO_TAG_NAME) {
-      $env:VERSION_PREFIX=$env:APPVEYOR_REPO_TAG_NAME
-    }
 assembly_info:
   patch: true
   file: '**\AssemblyInfo.*'
@@ -15,7 +10,7 @@ environment:
   SIGNING_KEY_PASSWORD:
     secure: q/2tcRmM2IULkFnXQ1DUIA==
   SN_PATH: C:\Program Files (x86)\Microsoft SDKs\Windows\v8.1A\bin\NETFX 4.5.1 Tools\sn.exe
-  VERSION_PREFIX: 1.0.0
+  VERSION_PREFIX: 1.2.1
 before_build:
 - ps: >-
     nuget restore
@@ -36,22 +31,11 @@ before_build:
     $snkPath = Join-Path $snkPath "\SigningKey.snk"
 
     [System.IO.File]::WriteAllBytes($snkPath, $snkData)
-
-
-    $wxsPath = Resolve-Path .\SMLogging.Setup\Product.wxs
-
-    $wxs = New-Object XML
-
-    $wxs.Load($wxsPath)
-
-    $wxs.Wix.Product.Version = "$env:VERSION_PREFIX"
-
-    $wxs.Save($wxsPath)
 build:
   verbosity: minimal
 after_build:
 - ps: >-
-    nuget pack NuGet.nuspec -Version "$env:VERSION_PREFIX.$env:APPVEYOR_BUILD_NUMBER" -NoPackageAnalysis
+    nuget pack NuGet.nuspec -NoPackageAnalysis
 
     $rnp = Resolve-Path(".\RELEASENOTES.md")
 

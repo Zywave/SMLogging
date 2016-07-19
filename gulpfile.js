@@ -8,21 +8,24 @@ var gutil = require('gulp-util');
 var insert = require('gulp-insert');
 var trim = require('gulp-trim');
 var xmlpoke = require('gulp-xmlpoke');
+var replace = require('gulp-replace');
+var assemblyInfo = require('gulp-dotnet-assembly-info');
 var git = require('gulp-git');
 var fs = require('fs');
 var es = require('event-stream');
 
-function getVersion(nuget) {
+function getVersion(format) {
     var version = JSON.parse(fs.readFileSync('./package.json', 'utf8')).version;
-
-    if (nuget) {
-        // nuget doesn't support semver prerelease numbers so converting 1.2.3-prerelease.1 to 1.2.3-prerelease01
+    if (format) {
         var match = /((?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*))(?:-([\da-z\-]+)\.(0|[1-9][0-9]?))?/i.exec(version);
-        if (match[2]) {
-            version = match[1] + '-' + match[2] + ('0' + match[3]).slice(-2);
+        if (format === 'nuget') {
+            if (match[2]) {
+                version = match[1] + '-' + match[2] + ('0' + match[3]).slice(-2);
+            }
+        } else if (format === 'no-pr') {
+            version = match[1];
         }
-    };
-
+    }
     return version;
 }
 
@@ -36,15 +39,15 @@ gulp.task('bump-version', function () {
         }
     }
 
-    return packageBump = gulp.src(['./package.json'])
+    return gulp.src(['./package.json'])
       .pipe(bump({ type: type, preid: 'prerelease' }).on('error', gutil.log))
-      .pipe(gulp.dest('./'));
+      .pipe(gulp.dest('.'));
 });
 
 gulp.task('changelog', function () {
     return gulp.src('CHANGELOG.md', { buffer: false })
         .pipe(conventionalChangelog({ preset: 'angular' }))
-        .pipe(gulp.dest('./'));
+        .pipe(gulp.dest('.'));
 });
 
 gulp.task('releasenotes', function () {
@@ -52,19 +55,46 @@ gulp.task('releasenotes', function () {
         .pipe(insert.transform(function () { return ''; })) 
         .pipe(conventionalChangelog({ preset: 'angular' }, {}, {}, {}, { headerPartial: '' }))
         .pipe(trim())
-        .pipe(gulp.dest('./'));
+        .pipe(gulp.dest('.'));
 });
 
 gulp.task('update-nuspec', function () {
-    var version = getVersion(true);
-
+    var version = getVersion('nuget');
     return gulp.src('NuGet.nuspec')
         .pipe(xmlpoke({
             replacements: [
-                { xpath: '/package/metadata/version', value: version }
+                { xpath: '/x:package/x:metadata/x:version', namespaces: { "x": "http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd" }, value: version }
             ]
         }))
         .pipe(gulp.dest('./'));
+});
+
+gulp.task('update-setup', function () {
+    var version = getVersion('no-pr');
+    return gulp.src('./SMLogging.Setup/Product.wxs')
+        .pipe(xmlpoke({
+            replacements: [
+                { xpath: '/x:Wix/x:Product/@Version', namespaces: { "x": "http://schemas.microsoft.com/wix/2006/wi" }, value: version }
+            ]
+        }))
+        .pipe(gulp.dest('.'));
+});
+
+gulp.task('update-assemblyinfo', function () {
+    var version = getVersion('no-pr');
+    gulp.src('**/AssemblyInfo.cs')
+        .pipe(assemblyInfo({
+            version: version + '.0',
+            fileVersion: version + '.0'
+        }))
+        .pipe(gulp.dest('.'));
+});
+
+gulp.task('update-appveyor', function () {
+    var version = getVersion('no-pr');
+    gulp.src('./appveyor.yml')
+        .pipe(replace(/VERSION_PREFIX:.*/, 'VERSION_PREFIX: ' + version))
+        .pipe(gulp.dest('.'));
 });
 
 gulp.task('commit-changes', function () {
@@ -93,6 +123,9 @@ gulp.task('release', function (callback) {
       'changelog',
       'releasenotes',
       'update-nuspec',
+      'update-setup',
+      'update-assemblyinfo',
+      'update-appveyor',
       'commit-changes',
       'push-changes',
       'create-new-tag',
