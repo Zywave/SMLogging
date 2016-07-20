@@ -77,7 +77,7 @@ gulp.task('update-setup', function () {
                 { xpath: '/x:Wix/x:Product/@Version', namespaces: { "x": "http://schemas.microsoft.com/wix/2006/wi" }, value: version }
             ]
         }))
-        .pipe(gulp.dest('.'));
+        .pipe(gulp.dest('./SMLogging.Setup/'));
 });
 
 gulp.task('update-assemblyinfo', function () {
