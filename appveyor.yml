@@ -45,7 +45,7 @@ after_build:
 artifacts:
 - path: SMLogging.Setup\bin\Release\SMLogging.msi
   name: GitHub
-- path: SMLogging.$(VERSION_PREFIX).$(APPVEYOR_BUILD_NUMBER).nupkg
+- path: SMLogging.*.nupkg
   name: NuGet
 deploy:
 - provider: GitHub
