@@ -39,7 +39,22 @@ namespace SMLogging
         /// </returns>
         public bool HandleError(Exception error)
         {
-            //Logging error from ProvideFault instead, so that operation context can be accessed.
+            if (error != null)
+            {
+                ErrorTraceData data = null;
+                if (error.Data.Contains(_dataKey))
+                {
+                    data = error.Data[_dataKey] as ErrorTraceData;
+                }
+
+                data = data ?? new ErrorTraceData();
+
+                data.ApplicationName = _applicationName;
+                data.MachineName = _machineName;
+                data.MachineIpAddress = _machineIpAddress;
+
+                TraceError(data, error);
+            }
 
             return false;
         }
@@ -54,35 +69,39 @@ namespace SMLogging
         {
             if (error != null)
             {
-                var operationContext = OperationContext.Current;
+                var data = new ErrorTraceData();
 
-                RemoteEndpointMessageProperty remoteEndpoint = null;
+                var operationContext = OperationContext.Current;
+                data.MessageId = GetMessageId(operationContext?.IncomingMessageHeaders?.MessageId);
+                data.Target = operationContext?.IncomingMessageHeaders?.To;
+                data.Action = operationContext?.IncomingMessageHeaders?.Action;
                 if (operationContext?.IncomingMessageHeaders != null)
                 {
                     if (operationContext.IncomingMessageProperties.ContainsKey(RemoteEndpointMessageProperty.Name))
                     {
-                        remoteEndpoint = operationContext.IncomingMessageProperties[RemoteEndpointMessageProperty.Name] as RemoteEndpointMessageProperty;
+                        var remoteEndpoint = operationContext.IncomingMessageProperties[RemoteEndpointMessageProperty.Name] as RemoteEndpointMessageProperty;
+                        data.ClientIpAddress = remoteEndpoint?.Address;
                     }
                 }
 
-                var messageId = GetMessageId(operationContext?.IncomingMessageHeaders?.MessageId);
-                var clientIpAddress = remoteEndpoint?.Address;
-                var target = operationContext?.IncomingMessageHeaders?.To;
-                var action = operationContext?.IncomingMessageHeaders?.Action;
-
-                TraceSource.TraceData(TraceEventType.Error, 0,
-                    messageId ?? "null",
-                    clientIpAddress ?? "0.0.0.0",
-                    _applicationName,
-                    _machineName,
-                    _machineIpAddress ?? "0.0.0.0",
-                    target?.Scheme ?? "null",
-                    target?.Host ?? "null",
-                    target?.Port ?? 0,
-                    target?.ToString() ?? "null",
-                    action ?? "null",
-                    error);
+                error.Data[_dataKey] = data;
             }
+        }
+
+        private void TraceError(ErrorTraceData data, Exception error)
+        {
+            TraceSource.TraceData(TraceEventType.Error, 0,
+                data.MessageId ?? "null",
+                data.ClientIpAddress ?? "0.0.0.0",
+                data.ApplicationName ?? "null",
+                data.MachineName ?? "null",
+                data.MachineIpAddress ?? "0.0.0.0",
+                data.Target?.Scheme ?? "null",
+                data.Target?.Host ?? "null",
+                data.Target?.Port ?? 0,
+                data.Target?.ToString() ?? "null",
+                data.Action ?? "null",
+                error);
         }
 
         private static string GetMessageId(UniqueId messageUniqueId)
@@ -100,6 +119,8 @@ namespace SMLogging
 
             return null;
         }
+
+        private static readonly object _dataKey = new object();
 
         private static readonly string _machineName;
         private static readonly string _machineIpAddress;

@@ -2,6 +2,7 @@
 
 namespace SMLogging
 {
+    [Serializable]
     internal class RequestTraceData
     {
         public string MessageId { get; set; }

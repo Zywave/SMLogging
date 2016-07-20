@@ -73,6 +73,7 @@
     <Compile Include="RequestLoggingBehaviorExtension.cs" />
     <Compile Include="RequestLoggingBehavior.cs" />
     <Compile Include="RequestLoggingMessageInspector.cs" />
+    <Compile Include="ErrorTraceData.cs" />
     <Compile Include="RequestTraceData.cs" />
     <Compile Include="StringHelpers.cs" />
     <Compile Include="TimeZoneInfoConverter.cs" />

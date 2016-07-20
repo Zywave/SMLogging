@@ -22,8 +22,9 @@ namespace SMLogging.Lab.Client
                     {
                         var sw1 = Stopwatch.StartNew();
 
+                        var r = service.GetData(1);
                         //var r = service.GetData(new StreamingRequest() {Value = 1});
-                        service.DoSomething(1);
+                        //service.DoSomething(1);
 
 
                         sw1.Stop();
