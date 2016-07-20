@@ -1,9 +1,10 @@
-<a name="1.2.1"></a>
-## [1.2.1](https://github.com/zywave/SMLogging/compare/1.2.0...v1.2.1) (2016-07-19)
+<a name="1.2.2"></a>
+## [1.2.2](https://github.com/zywave/SMLogging/compare/1.2.0...v1.2.2) (2016-07-20)
 
 
 ### Bug Fixes
 
+* log all errors (not just faults) ([4dde907](https://github.com/zywave/SMLogging/commit/4dde907))
 * wsdl requests are not treated as oneway ([219f91d](https://github.com/zywave/SMLogging/commit/219f91d))
 
 
