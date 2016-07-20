@@ -1,3 +1,13 @@
+<a name="1.2.3"></a>
+## [1.2.3](https://github.com/zywave/SMLogging/compare/1.2.2...v1.2.3) (2016-07-20)
+
+
+### Bug Fixes
+
+* setup properly versioned on release ([1162160](https://github.com/zywave/SMLogging/commit/1162160))
+
+
+
 <a name="1.2.2"></a>
 ## [1.2.2](https://github.com/zywave/SMLogging/compare/1.2.0...v1.2.2) (2016-07-20)
 
