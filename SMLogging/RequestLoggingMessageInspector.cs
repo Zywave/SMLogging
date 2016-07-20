@@ -134,6 +134,7 @@ namespace SMLogging
 
                 data.ResponseSize = Encoding.UTF8.GetByteCount(replyContent);
 
+                data.IsFault = reply.IsFault;
                 data.FaultCode = reply.IsFault ? GetFaultCode(replyContent) : null;
             }
 
@@ -236,6 +237,7 @@ namespace SMLogging
 
                 data.ResponseSize = Encoding.UTF8.GetByteCount(replyContent);
 
+                data.IsFault = reply.IsFault;
                 data.FaultCode = reply.IsFault ? GetFaultCode(replyContent) : null;
             }
 
