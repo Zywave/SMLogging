@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
@@ -56,6 +57,8 @@ namespace SMLogging
         /// </returns>
         public object AfterReceiveRequest(ref Message request, IClientChannel channel, InstanceContext instanceContext)
         {
+            var traceImmediately = false;
+
             var data = new RequestTraceData();
 
             data.ServerIpAddress = _machineIpAddress;
@@ -89,11 +92,13 @@ namespace SMLogging
                 data.RequestSize = Encoding.UTF8.GetByteCount(requestContent);
 
                 data.IsOneWay = request.Headers.Action != null && request.Headers.ReplyTo == null;
+
+                traceImmediately = data.IsOneWay.Value;
             }
 
             data.StartDateTime = DateTimeOffset.UtcNow;
 
-            if (data.IsOneWay)
+            if (traceImmediately)
             {
                 TraceRequest("Dispatch", data);
 
@@ -156,12 +161,14 @@ namespace SMLogging
         /// </returns>
         public object BeforeSendRequest(ref Message request, IClientChannel channel)
         {
+            var traceImmediately = false;
+
             var data = new RequestTraceData();
 
             data.ClientIpAddress = _machineIpAddress;
             data.ApplicationName = _applicationName;
             data.MachineName = _machineName;
-            
+
             if (request != null)
             {
                 if (AddMessageIdRequestHeader && request.Headers.MessageId == null)
@@ -187,6 +194,8 @@ namespace SMLogging
                 data.RequestSize = Encoding.UTF8.GetByteCount(requestContent);
 
                 data.IsOneWay = request.Headers.Action != null && request.Headers.ReplyTo == null;
+
+                traceImmediately = data.IsOneWay.Value;
             }
 
             if (channel != null)
@@ -196,7 +205,7 @@ namespace SMLogging
 
             data.StartDateTime = DateTimeOffset.UtcNow;
 
-            if (data.IsOneWay)
+            if (traceImmediately)
             {
                 TraceRequest("Client", data);
 
@@ -248,11 +257,27 @@ namespace SMLogging
 
         private void TraceRequest(string disposition, RequestTraceData data)
         {
+            string status = null;
+            if (data.IsOneWay.HasValue && data.IsOneWay.Value)
+            {
+                status = "OneWay";
+            }
+            else if (data.IsFault.HasValue)
+            {
+                status = data.IsFault.Value ? "Fault" : "Success";
+            }
+
+            int? timeTaken = null;
+            if (data.StartDateTime.HasValue && data.EndDateTime.HasValue)
+            {
+                timeTaken = Convert.ToInt32((data.EndDateTime.Value - data.StartDateTime.Value).TotalMilliseconds);
+            }
+
             TraceSource.TraceData(TraceEventType.Information, 0,
                 disposition,
                 data.MessageId ?? "null",
-                data.StartDateTime.ToString("yyyy-MM-dd"),
-                data.StartDateTime.ToString("HH:mm:ss.FFF"),
+                data.StartDateTime?.ToString("yyyy-MM-dd") ?? "null",
+                data.StartDateTime?.ToString("HH:mm:ss.FFF") ?? "null",
                 data.ClientIpAddress ?? "0.0.0.0",
                 data.ApplicationName ?? "null",
                 data.MachineName ?? "null",
@@ -262,11 +287,11 @@ namespace SMLogging
                 data.Target?.Port ?? 0,
                 data.Target?.ToString() ?? "null",
                 data.Action ?? "null",
-                data.IsOneWay ? "OneWay" : data.IsFault ? "Fault" : "Success",
+                status ?? "Unknown",
                 data.FaultCode ?? "null",
-                data.ResponseSize,
-                data.RequestSize,
-                data.IsOneWay ? 0 : (data.EndDateTime - data.StartDateTime).TotalMilliseconds
+                data.ResponseSize ?? -1,
+                data.RequestSize ?? -1,
+                timeTaken ?? -1
            );
         }
 
