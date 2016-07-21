@@ -70,13 +70,17 @@ namespace SMLogging.Setup.CustomActions
             var serviceBehaviorsElement = GetOrAddElement(document.Root, "system.serviceModel", "commonBehaviors", "serviceBehaviors");
             if (serviceBehaviorsElement.Element(RequestLoggingBehaviorName) == null)
             {
-                serviceBehaviorsElement.Add(new XElement(RequestLoggingBehaviorName));
+                serviceBehaviorsElement.Add(new XElement(RequestLoggingBehaviorName, 
+                    new XAttribute("createBufferedMessageCopy", data["CreateBufferedMessageCopy"]),
+                    new XAttribute("ignoreDispatchReplyMessage", data["IgnoreDispatchReplyMessage"])));
             }
 
             var endpointBehaviorsElement = GetOrAddElement(document.Root, "system.serviceModel", "commonBehaviors", "endpointBehaviors");
             if (endpointBehaviorsElement.Element(RequestLoggingBehaviorName) == null)
             {
-                endpointBehaviorsElement.Add(new XElement(RequestLoggingBehaviorName));
+                endpointBehaviorsElement.Add(new XElement(RequestLoggingBehaviorName,
+                    new XAttribute("createBufferedMessageCopy", data["CreateBufferedMessageCopy"]),
+                    new XAttribute("addMessageIdRequestHeader", data["AddMessageIdRequestHeader"])));
             }
             
             var sourcesElement = GetOrAddElement(document.Root, "system.diagnostics", "sources");

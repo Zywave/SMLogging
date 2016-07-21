@@ -19,7 +19,7 @@ namespace SMLogging
         /// </returns>
         protected override object CreateBehavior()
         {
-            return new RequestLoggingBehavior(Enabled, CreateBufferedMessageCopy, AddMessageIdRequestHeader);
+            return new RequestLoggingBehavior(Enabled, CreateBufferedMessageCopy, IgnoreDispatchReplyMessage, AddMessageIdRequestHeader);
         }
 
         /// <summary>
@@ -48,6 +48,17 @@ namespace SMLogging
         {
             get { return (bool)this["createBufferedMessageCopy"]; }
             set { this["createBufferedMessageCopy"] = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether to ignore the dispatch reply message. This can be used to prevent request logging from accessing the reply message which may result in double execution when 
+        /// unresolved IEnumerable objects are returned by the service. As a result, dispatch requests will be recorded having an 'Unknown' status rather than 'Fault/Success' and response size will be recorded as -1.
+        /// </summary>
+        [ConfigurationProperty("ignoreDispatchReplyMessage", DefaultValue = false)]
+        public bool IgnoreDispatchReplyMessage
+        {
+            get { return (bool)this["ignoreDispatchReplyMessage"]; }
+            set { this["ignoreDispatchReplyMessage"] = value; }
         }
 
         /// <summary>

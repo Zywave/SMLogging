@@ -19,15 +19,16 @@ namespace SMLogging
         /// Initializes a new instance of the <see cref="RequestLoggingBehavior"/> class.
         /// </summary>
         public RequestLoggingBehavior()
-            : this(true, false, true)
+            : this(true, false, false, true)
         {
             
         }
 
-        internal RequestLoggingBehavior(bool enabled, bool createBufferedMessageCopy, bool addMessageIdRequestHeader)
+        internal RequestLoggingBehavior(bool enabled, bool createBufferedMessageCopy, bool ignoreDispatchReplyMessage, bool addMessageIdRequestHeader)
         {
             Enabled = enabled;
             CreateBufferedMessageCopy = createBufferedMessageCopy;
+            IgnoreDispatchReplyMessage = ignoreDispatchReplyMessage;
             AddMessageIdRequestHeader = addMessageIdRequestHeader;
         }
 
@@ -40,6 +41,12 @@ namespace SMLogging
         /// Gets or sets a value indicating whether to buffer the entire request and response messages in memory to get full message sizes and fault codes of streamed messages.
         /// </summary>
         public bool CreateBufferedMessageCopy { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether to ignore the dispatch reply message. This can be used to prevent request logging from accessing the reply message which may result in double execution when 
+        /// unresolved IEnumerable objects are returned by the service. As a result, dispatch requests will be recorded having an 'Unknown' status rather than 'Fault/Success' and response size will be recorded as -1.
+        /// </summary>
+        public bool IgnoreDispatchReplyMessage { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether the client should add a message ID request header when it is not avaiable.
@@ -148,6 +155,7 @@ namespace SMLogging
             return new RequestLoggingMessageInspector
             {
                 CreateBufferedMessageCopy = CreateBufferedMessageCopy,
+                IgnoreDispatchReplyMessage = IgnoreDispatchReplyMessage,
                 AddMessageIdRequestHeader = AddMessageIdRequestHeader
             };
         }
