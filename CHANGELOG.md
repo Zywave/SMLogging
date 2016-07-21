@@ -1,3 +1,14 @@
+<a name="1.2.4"></a>
+## [1.2.4](https://github.com/zywave/SMLogging/compare/1.2.3...v1.2.4) (2016-07-21)
+
+
+### Bug Fixes
+
+* add option to ignore dispatch reply ([fdb1e4b](https://github.com/zywave/SMLogging/commit/fdb1e4b))
+* fault requests marked as faults ([e010de0](https://github.com/zywave/SMLogging/commit/e010de0))
+
+
+
 <a name="1.2.3"></a>
 ## [1.2.3](https://github.com/zywave/SMLogging/compare/1.2.2...v1.2.3) (2016-07-20)
 
