@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SMLogging.Lab.Client
@@ -9,8 +11,8 @@ namespace SMLogging.Lab.Client
     {
         static void Main()
         {
-            Console.WriteLine("Press any key to perform operations");
-            Console.ReadKey();
+        //    Console.WriteLine("Press any key to perform operations");
+        //    Console.ReadKey();
             var sw = Stopwatch.StartNew();
 
             Action action = () =>
@@ -22,10 +24,12 @@ namespace SMLogging.Lab.Client
                     {
                         var sw1 = Stopwatch.StartNew();
 
-                        var r = service.GetData(1);
+                        //var r = service.GetData(1 );
+                        var r = service.GetDatas(new [] { 1 });
                         //var r = service.GetData(new StreamingRequest() {Value = 1});
                         //service.DoSomething(1);
 
+                        Console.WriteLine(String.Join(",", r));
 
                         sw1.Stop();
                         Console.WriteLine($"Time taken: {sw1.ElapsedMilliseconds}");

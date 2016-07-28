@@ -1,4 +1,5 @@
-﻿using System.ServiceModel;
+﻿using System.Collections.Generic;
+using System.ServiceModel;
 using System.Threading.Tasks;
 
 namespace SMLogging.Lab
@@ -8,6 +9,9 @@ namespace SMLogging.Lab
     {
         [OperationContract]
         string GetData(int value);
+
+        [OperationContract]
+        IEnumerable<string> GetDatas(IEnumerable<int> values);
 
         [OperationContract]
         Task<string> GetData2(int value);
