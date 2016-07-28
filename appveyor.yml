@@ -1,0 +1,64 @@
+version: '{build}'
+configuration: Release
+assembly_info:
+  patch: true
+  file: '**\AssemblyInfo.*'
+  assembly_version: $(VERSION_PREFIX).0
+  assembly_file_version: $(VERSION_PREFIX).{build}
+  assembly_informational_version: $(VERSION_PREFIX).{build}
+environment:
+  SIGNING_KEY_PASSWORD:
+    secure: q/2tcRmM2IULkFnXQ1DUIA==
+  SN_PATH: C:\Program Files (x86)\Microsoft SDKs\Windows\v8.1A\bin\NETFX 4.5.1 Tools\sn.exe
+  VERSION_PREFIX: 1.2.5
+before_build:
+- ps: >-
+    nuget restore
+
+
+    $pfxPath = Resolve-Path .\SigningKey.pfx
+
+    $pfxData = [System.IO.File]::ReadAllBytes($pfxPath)
+
+    $cert = New-Object System.Security.Cryptography.X509Certificates.X509Certificate2 -ArgumentList @($pfxData, $env:SIGNING_KEY_PASSWORD, [System.Security.Cryptography.X509Certificates.X509KeyStorageFlags]::Exportable)
+
+    [System.Security.Cryptography.RSACryptoServiceProvider]$privateKey = $cert.PrivateKey;
+
+    $snkData = $privateKey.ExportCspBlob($true)
+
+    $snkPath = Resolve-Path .
+
+    $snkPath = Join-Path $snkPath "\SigningKey.snk"
+
+    [System.IO.File]::WriteAllBytes($snkPath, $snkData)
+build:
+  verbosity: minimal
+after_build:
+- ps: >-
+    nuget pack NuGet.nuspec -NoPackageAnalysis
+
+    $rnp = Resolve-Path(".\RELEASENOTES.md")
+
+    $rnc = [IO.File]::ReadAllText($rnp)
+
+    Set-AppveyorBuildVariable -Name RELEASE_NOTES -Value $rnc
+artifacts:
+- path: SMLogging.Setup\bin\Release\SMLogging.msi
+  name: GitHub
+- path: SMLogging.*.nupkg
+  name: NuGet
+deploy:
+- provider: GitHub
+  description: $(RELEASE_NOTES)
+  auth_token:
+    secure: 5oed8ST5+Mo9PGm7cT4L9JEhfE5SGnaOXSbNSgtj7fJn98RbuOOPLvFJnTbAeIT2
+  artifact: GitHub
+  on:
+    appveyor_repo_tag: true
+- provider: NuGet
+  api_key:
+    secure: l5pokJf/CEzqI6kb+nvdmvHw982ZLEHTxVZQpvZqyE6VEchEiR5XQkDjely3++ke
+  skip_symbols: true
+  artifact: NuGet
+  on:
+    appveyor_repo_tag: true
