@@ -82,7 +82,7 @@ gulp.task('update-setup', function () {
 
 gulp.task('update-assemblyinfo', function () {
     var version = getVersion('no-pr');
-    gulp.src('**/AssemblyInfo.cs')
+    return gulp.src('**/AssemblyInfo.cs')
         .pipe(assemblyInfo({
             version: version + '.0',
             fileVersion: version + '.0'
@@ -92,7 +92,7 @@ gulp.task('update-assemblyinfo', function () {
 
 gulp.task('update-appveyor', function () {
     var version = getVersion('no-pr');
-    gulp.src('./appveyor.yml')
+    return gulp.src('./appveyor.yml')
         .pipe(replace(/VERSION_PREFIX:.*/, 'VERSION_PREFIX: ' + version))
         .pipe(gulp.dest('.'));
 });
@@ -104,16 +104,16 @@ gulp.task('commit-changes', function () {
 });
 
 gulp.task('push-changes', function (cb) {
-    git.push('origin', 'master', cb);
+    return git.push('origin', 'master', cb);
 });
 
 gulp.task('create-new-tag', function (cb) {
     var version = getVersion();
-    git.tag(version, 'create tag for version: ' + version, function (error) {
+    return git.tag(version, 'create tag for version: ' + version, function (error) {
         if (error) {
             return cb(error);
         }
-        git.push('origin', 'master', { args: '--tags' }, cb);
+        return git.push('origin', 'master', { args: '--tags' }, cb);
     });
 });
 
