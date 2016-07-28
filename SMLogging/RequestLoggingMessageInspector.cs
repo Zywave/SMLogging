@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
@@ -178,9 +180,19 @@ namespace SMLogging
 
             if (request != null)
             {
-                if (AddMessageIdRequestHeader && request.Headers.MessageId == null)
+                if (AddMessageIdRequestHeader && request.Headers.MessageId == null && request.Version.Addressing != AddressingVersion.None)
                 {
-                    request.Headers.MessageId = new UniqueId(Guid.NewGuid());
+                    try
+                    {
+                        request.Headers.MessageId = new UniqueId(Guid.NewGuid());
+                    }
+                    catch
+                    {
+                        if (Debugger.IsAttached)
+                        {
+                            throw;
+                        }
+                    }
                 }
 
                 data.MessageId = GetMessageId(request.Headers.MessageId);
