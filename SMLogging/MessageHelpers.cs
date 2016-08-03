@@ -105,7 +105,7 @@ namespace SMLogging
             if (properties.ContainsKey(RemoteEndpointMessageProperty.Name))
             {
                 var remoteEndpoint = properties[RemoteEndpointMessageProperty.Name] as RemoteEndpointMessageProperty;
-                if (!String.IsNullOrWhiteSpace(remoteEndpoint?.Address))
+                if (!String.IsNullOrEmpty(remoteEndpoint?.Address))
                 {
                     address = remoteEndpoint.Address;
                     return true;
