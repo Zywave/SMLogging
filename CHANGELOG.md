@@ -1,3 +1,13 @@
+<a name="1.3.1"></a>
+## [1.3.1](https://github.com/zywave/SMLogging/compare/1.3.0...v1.3.1) (2016-08-03)
+
+
+### Bug Fixes
+
+* removed old attributes from install action ([7a8724d](https://github.com/zywave/SMLogging/commit/7a8724d))
+
+
+
 <a name="1.3.0"></a>
 # [1.3.0](https://github.com/zywave/SMLogging/compare/1.2.5...v1.3.0) (2016-08-03)
 
