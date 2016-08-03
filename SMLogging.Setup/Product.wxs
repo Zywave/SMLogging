@@ -19,7 +19,6 @@
     <Property Id="ERRORLOGGINGMAXIMUMFILEINDEX" Value="1" Secure="yes"/>
     <Property Id="CREATEBUFFEREDMESSAGECOPY" Value="false" Secure="yes"/>
     <Property Id="IGNOREDISPATCHREPLYMESSAGE" Value="false" Secure="yes"/>
-    <Property Id="ADDMESSAGEIDREQUESTHEADER" Value="true" Secure="yes"/>
     
 		<Feature Id="AssemblyFeature" Title="Install service model logging assembly" Level="1" Absent="disallow">
 			<ComponentGroupRef Id="AssemblyComponents"/>
@@ -30,7 +29,7 @@
 
     <Binary Id="SMLogging.Setup.CustomActions.CA.dll" SourceFile="..\SMLogging.Setup.CustomActions\bin\$(var.Configuration)\SMLogging.Setup.CustomActions.CA.dll"/>
 
-    <CustomAction Id="SetInstallRequestLoggingMachinConfigData" Property="InstallRequestLoggingMachinConfig" Value="RequestLoggingPathRoot=[REQUESTLOGGINGPATHROOT];RequestLoggingPath=[REQUESTLOGGINGPATH];RequestLoggingRollingMode=[REQUESTLOGGINGROLLINGMODE];RequestLoggingRollingInterval=[REQUESTLOGGINGROLLINGINTERVAL];RequestLoggingMaximumFileSize=[REQUESTLOGGINGMAXIMUMFILESIZE];RequestLoggingMaximumFileIndex=[REQUESTLOGGINGMAXIMUMFILEINDEX];CreateBufferedMessageCopy=[CREATEBUFFEREDMESSAGECOPY];IgnoreDispatchReplyMessage=[IGNOREDISPATCHREPLYMESSAGE];AddMessageIdRequestHeader=[ADDMESSAGEIDREQUESTHEADER];ProductVersion=[ProductVersion]"/>
+    <CustomAction Id="SetInstallRequestLoggingMachinConfigData" Property="InstallRequestLoggingMachinConfig" Value="RequestLoggingPathRoot=[REQUESTLOGGINGPATHROOT];RequestLoggingPath=[REQUESTLOGGINGPATH];RequestLoggingRollingMode=[REQUESTLOGGINGROLLINGMODE];RequestLoggingRollingInterval=[REQUESTLOGGINGROLLINGINTERVAL];RequestLoggingMaximumFileSize=[REQUESTLOGGINGMAXIMUMFILESIZE];RequestLoggingMaximumFileIndex=[REQUESTLOGGINGMAXIMUMFILEINDEX];CreateBufferedMessageCopy=[CREATEBUFFEREDMESSAGECOPY];IgnoreDispatchReplyMessage=[IGNOREDISPATCHREPLYMESSAGE];ProductVersion=[ProductVersion]"/>
     <CustomAction Id="InstallRequestLoggingMachinConfig" Return="check" Execute="deferred" Impersonate="no" BinaryKey="SMLogging.Setup.CustomActions.CA.dll" DllEntry="InstallRequestLoggingMachinConfig"/>
     <CustomAction Id="UninstallRequestLoggingMachinConfig" Return="check" Execute="deferred" Impersonate="no" BinaryKey="SMLogging.Setup.CustomActions.CA.dll" DllEntry="UninstallRequestLoggingMachinConfig"/>
     <CustomAction Id="SetInstallErrorLoggingMachinConfigData" Property="InstallErrorLoggingMachinConfig" Value="ErrorLoggingPathRoot=[ERRORLOGGINGPATHROOT];ErrorLoggingPath=[ERRORLOGGINGPATH];ErrorLoggingRollingMode=[ERRORLOGGINGROLLINGMODE];ErrorLoggingRollingInterval=[ERRORLOGGINGROLLINGINTERVAL];ErrorLoggingMaximumFileSize=[ERRORLOGGINGMAXIMUMFILESIZE];ErrorLoggingMaximumFileIndex=[ERRORLOGGINGMAXIMUMFILEINDEX];ProductVersion=[ProductVersion]"/>

@@ -77,8 +77,7 @@ namespace SMLogging.Setup.CustomActions
             if (endpointBehaviorsElement.Element(RequestLoggingBehaviorName) == null)
             {
                 endpointBehaviorsElement.Add(new XElement(RequestLoggingBehaviorName,
-                    new XAttribute("createBufferedMessageCopy", data["CreateBufferedMessageCopy"]),
-                    new XAttribute("addMessageIdRequestHeader", data["AddMessageIdRequestHeader"])));
+                    new XAttribute("createBufferedMessageCopy", data["CreateBufferedMessageCopy"])));
             }
             
             var sourcesElement = GetOrAddElement(document.Root, "system.diagnostics", "sources");
