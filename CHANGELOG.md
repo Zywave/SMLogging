@@ -1,18 +1,3 @@
-<a name="1.2.6"></a>
-## [1.2.6](https://github.com/zywave/SMLogging/compare/1.2.5...v1.2.6) (2016-08-03)
-
-
-### Features
-
-* activity tracing ([d2b6e85](https://github.com/zywave/SMLogging/commit/d2b6e85))
-
-
-### BREAKING CHANGES
-
-* added activityid and correlationid to format
-
-
-
 <a name="1.2.5"></a>
 ## [1.2.5](https://github.com/zywave/SMLogging/compare/1.2.4...v1.2.5) (2016-07-28)
 

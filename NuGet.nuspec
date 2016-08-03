@@ -2,7 +2,7 @@
   <metadata>
     <id>SMLogging</id>
 	  <title>Service Model Logging</title>
-    <version>1.2.6</version>
+    <version>1.2.5</version>
     <authors>Zywave</authors>
 	  <projectUrl>https://github.com/Zywave/SMLogging</projectUrl>
 	  <licenseUrl>https://raw.githubusercontent.com/Zywave/SMLogging/master/LICENSE</licenseUrl>
