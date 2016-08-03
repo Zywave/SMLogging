@@ -26,7 +26,8 @@
 		</Feature>
     <Feature Id="RequestLoggingMachineConfigFeature" Title="Register request logging in machine.config" Level="1"/>
     <Feature Id="ErrorLoggingMachineConfigFeature" Title="Register error logging in machine.config" Level="1"/>
-    
+    <Feature Id="EnableETETracingMachineConfigFeature" Title="Enable end to end tracing in machine.config" Level="1"/>
+
     <Binary Id="SMLogging.Setup.CustomActions.CA.dll" SourceFile="..\SMLogging.Setup.CustomActions\bin\$(var.Configuration)\SMLogging.Setup.CustomActions.CA.dll"/>
 
     <CustomAction Id="SetInstallRequestLoggingMachinConfigData" Property="InstallRequestLoggingMachinConfig" Value="RequestLoggingPathRoot=[REQUESTLOGGINGPATHROOT];RequestLoggingPath=[REQUESTLOGGINGPATH];RequestLoggingRollingMode=[REQUESTLOGGINGROLLINGMODE];RequestLoggingRollingInterval=[REQUESTLOGGINGROLLINGINTERVAL];RequestLoggingMaximumFileSize=[REQUESTLOGGINGMAXIMUMFILESIZE];RequestLoggingMaximumFileIndex=[REQUESTLOGGINGMAXIMUMFILEINDEX];CreateBufferedMessageCopy=[CREATEBUFFEREDMESSAGECOPY];IgnoreDispatchReplyMessage=[IGNOREDISPATCHREPLYMESSAGE];AddMessageIdRequestHeader=[ADDMESSAGEIDREQUESTHEADER];ProductVersion=[ProductVersion]"/>
@@ -35,6 +36,7 @@
     <CustomAction Id="SetInstallErrorLoggingMachinConfigData" Property="InstallErrorLoggingMachinConfig" Value="ErrorLoggingPathRoot=[ERRORLOGGINGPATHROOT];ErrorLoggingPath=[ERRORLOGGINGPATH];ErrorLoggingRollingMode=[ERRORLOGGINGROLLINGMODE];ErrorLoggingRollingInterval=[ERRORLOGGINGROLLINGINTERVAL];ErrorLoggingMaximumFileSize=[ERRORLOGGINGMAXIMUMFILESIZE];ErrorLoggingMaximumFileIndex=[ERRORLOGGINGMAXIMUMFILEINDEX];ProductVersion=[ProductVersion]"/>
     <CustomAction Id="InstallErrorLoggingMachinConfig" Return="check" Execute="deferred" Impersonate="no" BinaryKey="SMLogging.Setup.CustomActions.CA.dll" DllEntry="InstallErrorLoggingMachinConfig"/>
     <CustomAction Id="UninstallErrorLoggingMachinConfig" Return="check" Execute="deferred" Impersonate="no" BinaryKey="SMLogging.Setup.CustomActions.CA.dll" DllEntry="UninstallErrorLoggingMachinConfig"/>
+    <CustomAction Id="EnableEndToEndTracingMachineConfig" Return="check" Execute="deferred" Impersonate="no" BinaryKey="SMLogging.Setup.CustomActions.CA.dll" DllEntry="EnableEndToEndTracingMachineConfig"/>
 
     <InstallExecuteSequence>
       <Custom Action="SetInstallRequestLoggingMachinConfigData" After="InstallInitialize">
@@ -54,6 +56,9 @@
       </Custom>
       <Custom Action="UninstallErrorLoggingMachinConfig" After="MsiUnpublishAssemblies">
         REMOVE="ALL"
+      </Custom>
+      <Custom Action="EnableEndToEndTracingMachineConfig" After="PublishProduct">
+        <![CDATA[&EnableETETracingMachineConfigFeature=3]]>
       </Custom>
     </InstallExecuteSequence>
 
