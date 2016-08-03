@@ -5,7 +5,11 @@ namespace SMLogging
     [Serializable]
     internal class RequestTraceData
     {
-        public string MessageId { get; set; }
+        public Guid ActivityId { get; set; }
+
+        public Guid CorrelationId { get; set; }
+
+        public Guid MessageId { get; set; }
 
         public DateTimeOffset? StartDateTime { get; set; }
 

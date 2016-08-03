@@ -11,7 +11,6 @@ namespace SMLogging.Lab
     {
         public string GetData(int value)
         {
-            Debug.WriteLine($"GetData called: {value}");
             return value.ToString();
         }
 
@@ -28,6 +27,11 @@ namespace SMLogging.Lab
         public void DoSomething(int value)
         {
             
+        }
+
+        public void Fail()
+        {
+            throw new Exception("Fail");
         }
     }
 }

@@ -51,8 +51,6 @@ namespace SMLogging.Setup.CustomActions
         {
             var data = session.CustomActionData;
 
-            session.Log($"**CUSTOMACTIONDATA = {session["CustomActionData"]}");
-
             if (!File.Exists(path))
             {
                 session.Log($"Machine.config file ({path}) not found");
@@ -167,8 +165,6 @@ namespace SMLogging.Setup.CustomActions
         {
             var data = session.CustomActionData;
 
-            session.Log($"**CUSTOMACTIONDATA = {session["CustomActionData"]}");
-
             if (!File.Exists(path))
             {
                 session.Log($"Machine.config file ({path}) not found");
@@ -226,6 +222,43 @@ namespace SMLogging.Setup.CustomActions
             document.Root?.XPathSelectElement($"system.serviceModel/extensions/behaviorExtensions/add[@name='{ErrorLoggingBehaviorName}']")?.Remove();
             document.Root?.XPathSelectElement($"system.serviceModel/commonBehaviors/serviceBehaviors/{ErrorLoggingBehaviorName}")?.Remove();
             document.Root?.XPathSelectElement($"system.diagnostics/sources/source[@name='{ErrorLoggingSourceName}']")?.Remove();
+
+            document.Save(path);
+        }
+
+        #endregion
+
+        #region Activity Propagation
+
+        [CustomAction]
+        public static ActionResult EnableEndToEndTracingMachineConfig(Session session)
+        {
+            session.Log($"Begin {nameof(EnableEndToEndTracingMachineConfig)}");
+
+            EnableEndToEndTracing(MachineConfig32v4Path, session);
+            if (Environment.Is64BitOperatingSystem)
+            {
+                EnableEndToEndTracing(MachineConfig64v4Path, session);
+            }
+
+            session.Log($"End {nameof(EnableEndToEndTracingMachineConfig)}");
+            return ActionResult.Success;
+        }
+
+        private static void EnableEndToEndTracing(string path, Session session)
+        {
+            if (!File.Exists(path))
+            {
+                session.Log($"Machine.config file ({path}) not found");
+                return;
+            }
+
+            var document = XDocument.Load(path);
+            
+            var endToEndTracingElement = GetOrAddElement(document.Root, "system.serviceModel", "diagnostics", "endToEndTracing");
+            endToEndTracingElement.SetAttributeValue("propagateActivity", "true");
+            endToEndTracingElement.SetAttributeValue("activityTracing", "true");
+            endToEndTracingElement.SetAttributeValue("messageFlowTracing", "true");
 
             document.Save(path);
         }

@@ -61,6 +61,7 @@
     <Compile Include="FileRollingInterval.cs" />
     <Compile Include="FileRollingMode.cs" />
     <Compile Include="FileTraceListener.cs" />
+    <Compile Include="MessageHelpers.cs" />
     <Compile Include="MinimalFileLockHandler.cs" />
     <Compile Include="MutexFileLockHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -91,9 +92,12 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>IF $(ConfigurationName) == Release (
-  REM SN_PATH variable and SigningKey.snk file provided by CI
+    <PostBuildEvent>IF EXIST "$(SolutionDir)SigningKey.snk" (
   "%25SN_PATH%25" -R "$(TargetPath)" "$(SolutionDir)SigningKey.snk"
+) ELSE (
+  IF $(ConfigurationName) == Release (
+    EXIT 1
+  )
 )</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
@@ -8,9 +6,6 @@ using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Dispatcher;
 using System.Text;
-using System.Text.RegularExpressions;
-using System.Xml;
-using System.Xml.Linq;
 
 namespace SMLogging
 {
@@ -28,7 +23,6 @@ namespace SMLogging
         {
             CreateBufferedMessageCopy = false;
             IgnoreDispatchReplyMessage = false;
-            AddMessageIdRequestHeader = true;
             TraceSource = new TraceSource("System.ServiceModel.RequestLogging");
         }
         
@@ -42,12 +36,7 @@ namespace SMLogging
         /// unresolved IEnumerable objects are returned by the service. As a result, dispatch requests will be recorded having an 'Unknown' status rather than 'Fault/Success' and response size will be recorded as -1.
         /// </summary>
         public bool IgnoreDispatchReplyMessage { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether the client should add a message ID request header when it is not avaiable.
-        /// </summary>
-        public bool AddMessageIdRequestHeader { get; set; }
-
+        
         /// <summary>
         /// Gets the trace source.
         /// </summary>
@@ -76,11 +65,24 @@ namespace SMLogging
 
             if (request != null)
             {
-                data.MessageId = GetMessageId(request.Headers.MessageId);
-                if (request.Properties.ContainsKey(RemoteEndpointMessageProperty.Name))
+                Guid activityId;
+                Guid correlationId;
+                if (MessageHelpers.ExtractActivityAndCorrelationId(request, out activityId, out correlationId))
                 {
-                    var remoteEndpoint = request.Properties[RemoteEndpointMessageProperty.Name] as RemoteEndpointMessageProperty;
-                    data.ClientIpAddress = remoteEndpoint?.Address;
+                    data.ActivityId = activityId;
+                    data.CorrelationId = correlationId;
+                }
+
+                Guid messageId;
+                if (MessageHelpers.ExtractMessageId(request, out messageId))
+                {
+                    data.MessageId = messageId;
+                }
+
+                string remoteEndpointAddress;
+                if (MessageHelpers.ExtractRemoteEndpointAddress(request, out remoteEndpointAddress))
+                {
+                    data.ClientIpAddress = remoteEndpointAddress;
                 }
 
                 data.Target = request.Headers.To;
@@ -149,7 +151,7 @@ namespace SMLogging
                 data.ResponseSize = Encoding.UTF8.GetByteCount(replyContent);
 
                 data.IsFault = reply.IsFault;
-                data.FaultCode = reply.IsFault ? GetFaultCode(replyContent) : null;
+                data.FaultCode = reply.IsFault ? MessageHelpers.GetFaultCode(replyContent) : null;
             }
 
             TraceRequest("Dispatch", data);
@@ -180,22 +182,20 @@ namespace SMLogging
 
             if (request != null)
             {
-                if (AddMessageIdRequestHeader && request.Headers.MessageId == null && request.Version.Addressing != AddressingVersion.None)
+                Guid activityId;
+                Guid correlationId;
+                if (MessageHelpers.ExtractActivityAndCorrelationId(request, out activityId, out correlationId))
                 {
-                    try
-                    {
-                        request.Headers.MessageId = new UniqueId(Guid.NewGuid());
-                    }
-                    catch
-                    {
-                        if (Debugger.IsAttached)
-                        {
-                            throw;
-                        }
-                    }
+                    data.ActivityId = activityId;
+                    data.CorrelationId = correlationId;
                 }
 
-                data.MessageId = GetMessageId(request.Headers.MessageId);
+                Guid messageId;
+                if (MessageHelpers.ExtractMessageId(request, out messageId))
+                {
+                    data.MessageId = messageId;
+                }
+
                 data.Action = request.Headers.Action;
 
                 string requestContent;
@@ -266,7 +266,7 @@ namespace SMLogging
                 data.ResponseSize = Encoding.UTF8.GetByteCount(replyContent);
 
                 data.IsFault = reply.IsFault;
-                data.FaultCode = reply.IsFault ? GetFaultCode(replyContent) : null;
+                data.FaultCode = reply.IsFault ? MessageHelpers.GetFaultCode(replyContent) : null;
             }
 
             TraceRequest("Client", data);
@@ -293,8 +293,10 @@ namespace SMLogging
             }
 
             TraceSource.TraceData(TraceEventType.Information, 0,
+                data.ActivityId,
+                data.CorrelationId,
+                data.MessageId,
                 disposition,
-                data.MessageId ?? "null",
                 data.StartDateTime?.ToString("yyyy-MM-dd") ?? "null",
                 data.StartDateTime?.ToString("HH:mm:ss.FFF") ?? "null",
                 data.ClientIpAddress ?? "0.0.0.0",
@@ -313,68 +315,7 @@ namespace SMLogging
                 timeTaken ?? -1
            );
         }
-
-        private static string GetFaultCode(string messageContent)
-        {
-            var faultCode = "UnknownFault";
-            
-            try
-            {
-                var document = XDocument.Parse(messageContent);
-                var ns = document.Root?.Name.Namespace;
-                var faultCodeElement = document.Root?.Element(ns + "Body")?.Element(ns + "Fault")?.Element(ns + "Code");
-                if (faultCodeElement != null)
-                {
-                    faultCode = GetFaultCode(faultCodeElement);
-                }
-            }
-            catch
-            {
-                if (Debugger.IsAttached)
-                {
-                    throw;
-                }
-            }
-
-            return faultCode;
-        }
-
-        private static string GetFaultCode(XElement faultCodeElement)
-        {
-            var ns = faultCodeElement.Name.Namespace;
-            var code = faultCodeElement.Element(ns + "Value")?.Value;
-
-            if (code != null)
-            {
-                code = code.Substring(code.IndexOf(":", StringComparison.Ordinal) + 1);
-                code = Regex.Replace(code, @"\s+", "_");
-            }
-
-            var subFaultCodeElement = faultCodeElement.Element(ns + "Subcode");
-            if (subFaultCodeElement != null)
-            {
-                code += ":" + GetFaultCode(subFaultCodeElement);
-            }
-
-            return code;
-        }
-
-        private static string GetMessageId(UniqueId messageUniqueId)
-        {
-            if (messageUniqueId != null)
-            {
-                Guid messageGuid;
-                if (messageUniqueId.TryGetGuid(out messageGuid))
-                {
-                    return messageGuid.ToString();
-                }
-
-                return messageUniqueId.ToString();
-            }
-
-            return null;
-        }
-
+        
         private static readonly string _machineName;
         private static readonly string _machineIpAddress;
         private static readonly string _applicationName;

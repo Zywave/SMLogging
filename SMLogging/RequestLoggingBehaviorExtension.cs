@@ -19,7 +19,7 @@ namespace SMLogging
         /// </returns>
         protected override object CreateBehavior()
         {
-            return new RequestLoggingBehavior(Enabled, CreateBufferedMessageCopy, IgnoreDispatchReplyMessage, AddMessageIdRequestHeader);
+            return new RequestLoggingBehavior(Enabled, CreateBufferedMessageCopy, IgnoreDispatchReplyMessage);
         }
 
         /// <summary>
@@ -59,16 +59,6 @@ namespace SMLogging
         {
             get { return (bool)this["ignoreDispatchReplyMessage"]; }
             set { this["ignoreDispatchReplyMessage"] = value; }
-        }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether the client should add a message ID request header when it is not avaiable.
-        /// </summary>
-        [ConfigurationProperty("addMessageIdRequestHeader", DefaultValue = true)]
-        public bool AddMessageIdRequestHeader
-        {
-            get { return (bool)this["addMessageIdRequestHeader"]; }
-            set { this["addMessageIdRequestHeader"] = value; }
         }
     }
 }

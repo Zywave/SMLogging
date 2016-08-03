@@ -27,5 +27,10 @@ namespace SMLogging.Lab.Client
         {
             Channel.DoSomething(value);
         }
+        
+        public void Fail()
+        {
+            Channel.Fail();
+        }
     }
 }

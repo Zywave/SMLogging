@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -11,51 +12,74 @@ namespace SMLogging.Lab.Client
     {
         static void Main()
         {
-        //    Console.WriteLine("Press any key to perform operations");
-        //    Console.ReadKey();
-            var sw = Stopwatch.StartNew();
+            Trace.CorrelationManager.ActivityId = Guid.NewGuid();
 
-            Action action = () =>
+            Console.Write("Basic service... ");
+            using (var service = new LabServiceProxy())
             {
-                //using (var service = new StreamingLabServiceProxy())
-                using (var service = new LabServiceProxy())
+                var r = service.GetData(1);
+            }
+            Console.WriteLine("done");
+
+            Console.Write("Enumerable service... ");
+            using (var service = new LabServiceProxy())
+            {
+                var r = service.GetDatas(new[] { 1, 2, 3 });
+            }
+            Console.WriteLine("done");
+
+            Console.Write("Async service... ");
+            using (var service = new LabServiceProxy())
+            {
+                var r = service.GetData2(1).Result;
+            }
+            Console.WriteLine("done");
+
+            Console.Write("One-way service... ");
+            using (var service = new LabServiceProxy())
+            {
+                service.DoSomething(1);
+            }
+            Console.WriteLine("done");
+
+            Console.Write("Faulting service... ");
+            using (var service = new LabServiceProxy())
+            {
+                try
                 {
-                    while (true)
-                    {
-                        var sw1 = Stopwatch.StartNew();
-
-                        //var r = service.GetData(1 );
-                        var r = service.GetDatas(new [] { 1 });
-                        //var r = service.GetData(new StreamingRequest() {Value = 1});
-                        //service.DoSomething(1);
-
-                        Console.WriteLine(String.Join(",", r));
-
-                        sw1.Stop();
-                        Console.WriteLine($"Time taken: {sw1.ElapsedMilliseconds}");
-                        Console.ReadLine();
-                    }
+                    service.Fail();
                 }
-            };
+                catch { }
+            }
+            Console.WriteLine("done");
 
-            //Task.WaitAll(
-                //Task.Factory.StartNew(action),
-                //Task.Factory.StartNew(action),
-                //Task.Factory.StartNew(action),
-                //Task.Factory.StartNew(action),
-                //Task.Factory.StartNew(action),
-                //Task.Factory.StartNew(action),
-                //Task.Factory.StartNew(action),
-                //Task.Factory.StartNew(action),
-                //Task.Factory.StartNew(action),
-                //Task.Factory.StartNew(action)
-            //);
+            //Console.Write("Streaming service... ");
+            //using (var service = new StreamingLabServiceProxy())
+            //{
+            //    var r = service.GetData(new StreamingRequest() {Value = 1});
+            //}
+            //Console.WriteLine("done");
 
-            action();
+            double average, total;
+            Console.Write("Performance... ");
+            using (var service = new LabServiceProxy())
+            {
+                var times = new List<long>();
+                for (var i = 0; i < 500; i++)
+                {
+                    var sw = Stopwatch.StartNew();
+                    var r = service.GetData2(1).Result;
+                    sw.Stop();
 
-            sw.Stop();
-            Console.WriteLine($"Total time taken: {sw.ElapsedMilliseconds}");
-            Console.WriteLine("Press any key to close");
+                    times.Add(sw.ElapsedMilliseconds);
+                }
+                average = times.Average();
+                total = times.Sum();
+            }
+            Console.WriteLine("done");
+            Console.WriteLine($"  Average:\t{average}");
+            Console.WriteLine($"  Total:\t{total}");
+
             Console.ReadKey();
         }
     }

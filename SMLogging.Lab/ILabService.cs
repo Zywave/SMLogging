@@ -18,5 +18,8 @@ namespace SMLogging.Lab
 
         [OperationContract(IsOneWay = true)]
         void DoSomething(int value);
+        
+        [OperationContract]
+        void Fail();
     }
 }

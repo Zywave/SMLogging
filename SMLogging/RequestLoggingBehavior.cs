@@ -19,17 +19,16 @@ namespace SMLogging
         /// Initializes a new instance of the <see cref="RequestLoggingBehavior"/> class.
         /// </summary>
         public RequestLoggingBehavior()
-            : this(true, false, false, true)
+            : this(true, false, false)
         {
             
         }
 
-        internal RequestLoggingBehavior(bool enabled, bool createBufferedMessageCopy, bool ignoreDispatchReplyMessage, bool addMessageIdRequestHeader)
+        internal RequestLoggingBehavior(bool enabled, bool createBufferedMessageCopy, bool ignoreDispatchReplyMessage)
         {
             Enabled = enabled;
             CreateBufferedMessageCopy = createBufferedMessageCopy;
             IgnoreDispatchReplyMessage = ignoreDispatchReplyMessage;
-            AddMessageIdRequestHeader = addMessageIdRequestHeader;
         }
 
         /// <summary>
@@ -51,7 +50,7 @@ namespace SMLogging
         /// <summary>
         /// Gets or sets a value indicating whether the client should add a message ID request header when it is not avaiable.
         /// </summary>
-        public bool AddMessageIdRequestHeader { get; set; }
+        public bool PropagateActivity { get; set; }
 
         #region IServiceBehavior Implementation
 
@@ -156,7 +155,6 @@ namespace SMLogging
             {
                 CreateBufferedMessageCopy = CreateBufferedMessageCopy,
                 IgnoreDispatchReplyMessage = IgnoreDispatchReplyMessage,
-                AddMessageIdRequestHeader = AddMessageIdRequestHeader
             };
         }
     }

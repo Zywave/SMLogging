@@ -72,15 +72,33 @@ namespace SMLogging
                 var data = new ErrorTraceData();
 
                 var operationContext = OperationContext.Current;
-                data.MessageId = GetMessageId(operationContext?.IncomingMessageHeaders?.MessageId);
-                data.Target = operationContext?.IncomingMessageHeaders?.To;
-                data.Action = operationContext?.IncomingMessageHeaders?.Action;
+
                 if (operationContext?.IncomingMessageHeaders != null)
                 {
-                    if (operationContext.IncomingMessageProperties.ContainsKey(RemoteEndpointMessageProperty.Name))
+                    Guid activityId;
+                    Guid correlationId;
+                    if (MessageHelpers.ExtractActivityAndCorrelationId(operationContext.IncomingMessageHeaders, out activityId, out correlationId))
                     {
-                        var remoteEndpoint = operationContext.IncomingMessageProperties[RemoteEndpointMessageProperty.Name] as RemoteEndpointMessageProperty;
-                        data.ClientIpAddress = remoteEndpoint?.Address;
+                        data.ActivityId = activityId;
+                        data.CorrelationId = correlationId;
+                    }
+
+                    Guid messageId;
+                    if (MessageHelpers.ExtractMessageId(operationContext.IncomingMessageHeaders, out messageId))
+                    {
+                        data.MessageId = messageId;
+                    }
+
+                    data.Target = operationContext.IncomingMessageHeaders.To;
+                    data.Action = operationContext.IncomingMessageHeaders.Action;
+                }
+                
+                if (operationContext?.IncomingMessageProperties != null)
+                {
+                    string remoteEndpointAddress;
+                    if (MessageHelpers.ExtractRemoteEndpointAddress(operationContext.IncomingMessageProperties, out remoteEndpointAddress))
+                    {
+                        data.ClientIpAddress = remoteEndpointAddress;
                     }
                 }
 
@@ -91,7 +109,9 @@ namespace SMLogging
         private void TraceError(ErrorTraceData data, Exception error)
         {
             TraceSource.TraceData(TraceEventType.Error, 0,
-                data.MessageId ?? "null",
+                data.ActivityId,
+                data.CorrelationId,
+                data.MessageId,
                 data.ClientIpAddress ?? "0.0.0.0",
                 data.ApplicationName ?? "null",
                 data.MachineName ?? "null",
@@ -102,22 +122,6 @@ namespace SMLogging
                 data.Target?.ToString() ?? "null",
                 data.Action ?? "null",
                 error);
-        }
-
-        private static string GetMessageId(UniqueId messageUniqueId)
-        {
-            if (messageUniqueId != null)
-            {
-                Guid messageGuid;
-                if (messageUniqueId.TryGetGuid(out messageGuid))
-                {
-                    return messageGuid.ToString();
-                }
-
-                return messageUniqueId.ToString();
-            }
-
-            return null;
         }
 
         private static readonly object _dataKey = new object();
