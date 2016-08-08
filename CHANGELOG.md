@@ -1,3 +1,13 @@
+<a name="1.3.2"></a>
+## [1.3.2](https://github.com/zywave/SMLogging/compare/1.3.1...v1.3.2) (2016-08-08)
+
+
+### Bug Fixes
+
+* remove duplicate activity id ([fb149ca](https://github.com/zywave/SMLogging/commit/fb149ca))
+
+
+
 <a name="1.3.1"></a>
 ## [1.3.1](https://github.com/zywave/SMLogging/compare/1.3.0...v1.3.1) (2016-08-03)
 

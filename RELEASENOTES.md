@@ -1,3 +1,3 @@
 ### Bug Fixes
 
-* removed old attributes from install action ([7a8724d](https://github.com/zywave/SMLogging/commit/7a8724d))
+* remove duplicate activity id ([fb149ca](https://github.com/zywave/SMLogging/commit/fb149ca))
