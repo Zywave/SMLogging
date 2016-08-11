@@ -513,8 +513,8 @@ namespace SMLogging
             namedArgs["DateTime"] = dateTime;
             namedArgs["Timestamp"] = DateTime.UtcNow.Ticks;
             namedArgs["ProcessId"] = _processId;
-            namedArgs["ProcessName"] = _processName;
-            namedArgs["AppName"] = _appName;
+            namedArgs["ProcessName"] = RemoveInvalidFileNameCharacters(_processName);
+            namedArgs["AppName"] = RemoveInvalidFileNameCharacters(_appName);
 
             return StringHelpers.NamedFormat(CultureInfo.InvariantCulture, path, namedArgs);
         }
@@ -646,6 +646,16 @@ namespace SMLogging
                 case FileLockingMode.Mutex: return new MutexFileLockHandler("D49A1B991B5D4A1396026DB4F1A54EA5");
                 default: return new ExclusiveFileLockHandler();
             }
+        }
+
+        private static string RemoveInvalidFileNameCharacters(string value)
+        { 
+            foreach (var invalidChar in Path.GetInvalidFileNameChars())
+            {
+                value = value.Replace(invalidChar.ToString(), string.Empty);
+            }
+
+            return value;
         }
 
         #endregion
