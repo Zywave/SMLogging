@@ -122,11 +122,18 @@ namespace SMLogging
                         {
                             WriteTracePassthrough(evt.EventCache, evt.Source, evt.EventType, evt.Id, evt.Message);
                         }
-                        
+
                     }
                     finally
                     {
                         ReleaseLock();
+                    }
+                }
+                else
+                {
+                    foreach (var evt in events)
+                    {
+                        _queue.Enqueue(evt);
                     }
                 }
             }
