@@ -55,6 +55,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\SMLogging\AppDomainHelpers.cs">
+      <Link>AppDomainHelpers.cs</Link>
+    </Compile>
     <Compile Include="..\SMLogging\BackgroundFileTraceListener.cs">
       <Link>BackgroundFileTraceListener.cs</Link>
     </Compile>
