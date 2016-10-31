@@ -50,6 +50,7 @@
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppDomainHelpers.cs" />
     <Compile Include="BackgroundFileTraceListener.cs" />
     <Compile Include="EncodingConverter.cs" />
     <Compile Include="ErrorLoggingBehavior.cs" />

@@ -680,11 +680,7 @@ namespace SMLogging
                 _processName = process.ProcessName;
             }
 
-            _appName = AppDomain.CurrentDomain.FriendlyName;
-            if (_appName.StartsWith("/LM/W3SVC/"))
-            {
-                _appName = "W3SVC" + _appName.Split('/')[3];
-            }
+            _appName = AppDomain.CurrentDomain.GetFriendlyName();
         }
 
         #endregion
