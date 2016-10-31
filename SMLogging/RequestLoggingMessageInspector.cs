@@ -168,7 +168,7 @@ namespace SMLogging
         /// <param name="channel">The  client object channel.</param>
         /// <returns>
         /// The object that is returned as the correlationState argument of the <see cref="M:System.ServiceModel.Dispatcher.IClientMessageInspector.AfterReceiveReply(System.ServiceModel.Channels.Message@,System.Object)" /> method. 
-        /// This is null if no correlation state is used.The best practice is to make this a <see cref="T:System.Guid" /> to ensure that no two <paramref name="correlationState" /> objects are the same.
+        /// This is null if no correlation state is used.The best practice is to make this a <see cref="T:System.Guid" /> to ensure that no two correlationState objects are the same.
         /// </returns>
         public object BeforeSendRequest(ref Message request, IClientChannel channel)
         {
