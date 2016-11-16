@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using SMLogging.Properties;
 
 namespace SMLogging
 {
@@ -24,8 +25,7 @@ namespace SMLogging
         {
             FlushInterval = 5000;
             MaxFlushSize = 1000;
-
-            _queue = new ConcurrentQueue<Event>();
+            MaxQueueSize = 10000;
         }
 
         /// <summary>
@@ -38,8 +38,7 @@ namespace SMLogging
         {
             FlushInterval = 5000;
             MaxFlushSize = 1000;
-
-            _queue = new ConcurrentQueue<Event>();
+            MaxQueueSize = 10000;
         }
 
         #endregion
@@ -66,6 +65,15 @@ namespace SMLogging
         /// </remarks>
         [ConfigurationProperty("maxFlushSize")]
         public int MaxFlushSize { get; set; }
+
+        /// <summary>
+        /// Gets or sets the maximum size of the queue.
+        /// </summary>
+        /// <remarks>
+        /// This value specifies the maximum number of events to queue. The default value is 10000.
+        /// </remarks>
+        [ConfigurationProperty("maxQueueSize")]
+        public int MaxQueueSize { get; set; }
 
         #endregion
 
@@ -133,7 +141,7 @@ namespace SMLogging
                 {
                     foreach (var evt in events)
                     {
-                        _queue.Enqueue(evt);
+                        EnqueueEvent(evt, false);
                     }
                 }
             }
@@ -181,11 +189,35 @@ namespace SMLogging
                 Message = message
             };
 
-            _queue.Enqueue(evt);
+            EnqueueEvent(evt, true);
 
             if (FlushInterval >= 0 && !Trace.AutoFlush && !IsBackgroundFlushing)
             {
                 StartBackgroundFlushing();
+            }
+        }
+
+        private void EnqueueEvent(Event evt, bool force)
+        {
+            if (_queue.Count >= MaxQueueSize)
+            {
+                if (force)
+                {
+                    Event oldEvt;
+                    _queue.TryDequeue(out oldEvt);
+                    _queue.Enqueue(evt);
+                }
+
+                if (!_maxQueueSizeReached)
+                {
+                    _maxQueueSizeReached = true;
+                    Fail(AssemblyResources.MaxQueueSizeReached);
+                }
+            }
+            else
+            {
+                _queue.Enqueue(evt);
+                _maxQueueSizeReached = false;
             }
         }
 
@@ -231,9 +263,10 @@ namespace SMLogging
 
         #region Private Fields
 
-        private readonly ConcurrentQueue<Event> _queue;
+        private readonly ConcurrentQueue<Event> _queue = new ConcurrentQueue<Event>();
         private CancellationTokenSource _workerCts;
         private static readonly object _workerLock = new object();
+        private bool _maxQueueSizeReached = false;
 
         #endregion
 

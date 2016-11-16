@@ -132,6 +132,9 @@
   <data name="LogicalOperationStackTraceToken" xml:space="preserve">
     <value>LogicalOperationStack={0}</value>
   </data>
+  <data name="MaxQueueSizeReached" xml:space="preserve">
+    <value>Max queue size reached. Events are being dropped.</value>
+  </data>
   <data name="MissingRequiredAttribute" xml:space="preserve">
     <value>The required attribute '{0}' is missing.</value>
   </data>

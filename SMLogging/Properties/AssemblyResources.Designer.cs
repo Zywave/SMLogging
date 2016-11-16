@@ -106,6 +106,15 @@ namespace SMLogging.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Max queue size reached. Events are being dropped..
+        /// </summary>
+        internal static string MaxQueueSizeReached {
+            get {
+                return ResourceManager.GetString("MaxQueueSizeReached", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The required attribute &apos;{0}&apos; is missing..
         /// </summary>
         internal static string MissingRequiredAttribute {
