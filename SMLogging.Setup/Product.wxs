@@ -19,11 +19,16 @@
     <Property Id="ERRORLOGGINGMAXIMUMFILEINDEX" Value="1" Secure="yes"/>
     <Property Id="CREATEBUFFEREDMESSAGECOPY" Value="false" Secure="yes"/>
     <Property Id="IGNOREDISPATCHREPLYMESSAGE" Value="false" Secure="yes"/>
+
+    <PropertyRef Id="NETFRAMEWORK40FULLINSTALLROOTDIR"/>
     
 		<Feature Id="AssemblyFeature" Title="Install service model logging assembly" Level="1" Absent="disallow">
 			<ComponentGroupRef Id="AssemblyComponents"/>
 		</Feature>
-    <Feature Id="RequestLoggingMachineConfigFeature" Title="Register request logging in machine.config" Level="1"/>
+    <Feature Id="EventSourceFeature" Title="Install SMLogging event source for logging failures" Level="1" >
+      <ComponentGroupRef Id="EventSourceComponents"/>
+    </Feature>
+    <Feature Id="RequestLoggingMachineConfigFeature" Title="Register request logging in machine.config" Level="1" />
     <Feature Id="ErrorLoggingMachineConfigFeature" Title="Register error logging in machine.config" Level="1"/>
     <Feature Id="EnableETETracingMachineConfigFeature" Title="Enable end to end tracing in machine.config" Level="1"/>
 
@@ -66,7 +71,7 @@
 	<Fragment>
 		<Directory Id="TARGETDIR" Name="SourceDir">
 			<Directory Id="ProgramFilesFolder">
-        <Directory Id="INSTALLFOLDER" Name="Service Model Logging">
+        <Directory Id="INSTALLFOLDER" Name="Service Model Logging" >
           <Directory Id="NET40FOLDER" Name="net40"/>
           <Directory Id="NET35FOLDER" Name="net35"/>
         </Directory>
@@ -86,5 +91,12 @@
         <File Id="System.Threading.dll_net35_gac" Name="System.Threading.dll" Source="$(var.SMLogging-net35.TargetDir)System.Threading.dll" KeyPath="yes" Vital="yes" Checksum="yes" Assembly=".net" AssemblyManifest="System.Threading.dll_net35_gac"/>
       </Component>
 		</ComponentGroup>
+
+    <ComponentGroup Id="EventSourceComponents" >
+      <Component Id="EventSource" Guid="F1B110D3-6A72-4E87-9CFA-C37A0FF08E26" Directory="INSTALLFOLDER" Permanent="no">
+        <!-- This assumes .NET 4x is installed.  May need to conitionally look for other versions of .NET to get this path. -->
+        <util:EventSource Log="Application" Name="SMLogging" EventMessageFile="[NETFRAMEWORK40FULLINSTALLROOTDIR]EventLogMessages.dll" KeyPath="yes" />
+      </Component>
+    </ComponentGroup>
 	</Fragment>
 </Wix>

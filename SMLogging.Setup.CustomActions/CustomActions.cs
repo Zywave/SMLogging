@@ -83,11 +83,11 @@ namespace SMLogging.Setup.CustomActions
             var sourcesElement = GetOrAddElement(document.Root, "system.diagnostics", "sources");
             if (sourcesElement.XPathSelectElement($"source[@name='{RequestLoggingSourceName}']") == null)
             {
-                sourcesElement.Add(new XElement("source", 
-                    new XAttribute("name", RequestLoggingSourceName), 
+                sourcesElement.Add(new XElement("source",
+                    new XAttribute("name", RequestLoggingSourceName),
                     new XAttribute("switchValue", RequestLoggingSourceSwitchValue),
-                    new XElement("listeners", 
-                        new XElement("remove", 
+                    new XElement("listeners",
+                        new XElement("remove",
                             new XAttribute("name", "Default")),
                         new XElement("add",
                             new XAttribute("name", FileTraceListenerName),
@@ -96,7 +96,21 @@ namespace SMLogging.Setup.CustomActions
                             new XAttribute("rollingMode", data["RequestLoggingRollingMode"]),
                             new XAttribute("rollingInterval", data["RequestLoggingRollingInterval"]),
                             new XAttribute("maximumFileSize", data["RequestLoggingMaximumFileSize"]),
-                            new XAttribute("maximumFileIndex", data["RequestLoggingMaximumFileIndex"])))));
+                            new XAttribute("maximumFileIndex", data["RequestLoggingMaximumFileIndex"]),
+                            new XAttribute("failTraceSource", RequestLoggingFailSourceName)))));
+            }
+            if (sourcesElement.XPathSelectElement($"source[@name='{RequestLoggingFailSourceName}']") == null)
+            {
+                sourcesElement.Add(new XElement("source",
+                    new XAttribute("name", RequestLoggingFailSourceName),
+                    new XAttribute("switchValue", RequestLoggingFailSourceSwitchValue),
+                    new XElement("listeners",
+                        new XElement("remove",
+                            new XAttribute("name", "Default")),
+                        new XElement("add",
+                            new XAttribute("name", EventLogListenerName),
+                            new XAttribute("type", EventLogTraceListenerType),
+                            new XAttribute("initializeData", EventLogSourceName)))));
             }
             
             document.Save(path);
@@ -118,6 +132,7 @@ namespace SMLogging.Setup.CustomActions
             document.Root?.XPathSelectElement($"system.serviceModel/commonBehaviors/serviceBehaviors/{RequestLoggingBehaviorName}")?.Remove();
             document.Root?.XPathSelectElement($"system.serviceModel/commonBehaviors/endpointBehaviors/{RequestLoggingBehaviorName}")?.Remove();
             document.Root?.XPathSelectElement($"system.diagnostics/sources/source[@name='{RequestLoggingSourceName}']")?.Remove();
+            document.Root?.XPathSelectElement($"system.diagnostics/sources/source[@name='{RequestLoggingFailSourceName}']")?.Remove();
 
             document.Save(path);
         }
@@ -200,7 +215,22 @@ namespace SMLogging.Setup.CustomActions
                             new XAttribute("rollingMode", data["ErrorLoggingRollingMode"]),
                             new XAttribute("rollingInterval", data["ErrorLoggingRollingInterval"]),
                             new XAttribute("maximumFileSize", data["ErrorLoggingMaximumFileSize"]),
-                            new XAttribute("maximumFileIndex", data["ErrorLoggingMaximumFileIndex"])))));
+                            new XAttribute("maximumFileIndex", data["ErrorLoggingMaximumFileIndex"]),
+                            new XAttribute("failTraceSource", ErrorLoggingFailSourceName)))));
+            }
+
+            if (sourcesElement.XPathSelectElement($"source[@name='{ErrorLoggingFailSourceName}']") == null)
+            {
+                sourcesElement.Add(new XElement("source",
+                    new XAttribute("name", ErrorLoggingFailSourceName),
+                    new XAttribute("switchValue", ErrorLoggingFailSourceSwitchValue),
+                    new XElement("listeners",
+                        new XElement("remove",
+                            new XAttribute("name", "Default")),
+                        new XElement("add",
+                            new XAttribute("name", EventLogListenerName),
+                            new XAttribute("type", EventLogTraceListenerType),
+                            new XAttribute("initializeData", EventLogSourceName)))));
             }
 
             document.Save(path);
@@ -221,6 +251,7 @@ namespace SMLogging.Setup.CustomActions
             document.Root?.XPathSelectElement($"system.serviceModel/extensions/behaviorExtensions/add[@name='{ErrorLoggingBehaviorName}']")?.Remove();
             document.Root?.XPathSelectElement($"system.serviceModel/commonBehaviors/serviceBehaviors/{ErrorLoggingBehaviorName}")?.Remove();
             document.Root?.XPathSelectElement($"system.diagnostics/sources/source[@name='{ErrorLoggingSourceName}']")?.Remove();
+            document.Root?.XPathSelectElement($"system.diagnostics/sources/source[@name='{ErrorLoggingFailSourceName}']")?.Remove();
 
             document.Save(path);
         }
@@ -313,6 +344,13 @@ namespace SMLogging.Setup.CustomActions
         private const string ErrorLoggingSourceSwitchValue = "Error";
         private const string FileTraceListenerName = "File";
         private const string BackgroundFileTraceListenerTypeFormat = "SMLogging.BackgroundFileTraceListener, SMLogging, Version={0}.0, Culture=neutral, PublicKeyToken=ddc81ec55fc35caf";
+        private const string RequestLoggingFailSourceName = "System.ServiceModel.RequestLogging.Fail";
+        private const string RequestLoggingFailSourceSwitchValue = "Error";
+        private const string ErrorLoggingFailSourceName = "System.ServiceModel.ErrorLogging.Fail";
+        private const string ErrorLoggingFailSourceSwitchValue = "Error";
+        private const string EventLogListenerName = "EventLog";
+        private const string EventLogTraceListenerType = "System.Diagnostics.EventLogTraceListener";
+        private const string EventLogSourceName = "SMLogging";
 
         #endregion
     }
