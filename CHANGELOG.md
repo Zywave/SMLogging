@@ -1,3 +1,20 @@
+<a name="1.3.5"></a>
+## [1.3.5](https://github.com/zywave/SMLogging/compare/1.3.4...v1.3.5) (2016-11-20)
+
+
+### Bug Fixes
+
+* prevent BackgroundFileTraceListener from queuing events infinitely when failing to write to file by adding a MaxQueueSize setting defaulted to 10000 ([88ef72c](https://github.com/zywave/SMLogging/commit/88ef72c))
+* remove unecessary static locks ([5cbd964](https://github.com/zywave/SMLogging/commit/5cbd964))
+
+
+### Features
+
+* log failures to event log ([1c12355](https://github.com/zywave/SMLogging/commit/1c12355))
+* log fault exception details in error handler ([8b56bb8](https://github.com/zywave/SMLogging/commit/8b56bb8))
+
+
+
 <a name="1.3.4"></a>
 ## [1.3.4](https://github.com/zywave/SMLogging/compare/1.3.3...v1.3.4) (2016-10-31)
 

@@ -1,5 +1,10 @@
 ### Bug Fixes
 
-* better app name for IIS applications ([3db8b5a](https://github.com/zywave/SMLogging/commit/3db8b5a))
-* net35 include AppDomainHelpers ([a7e1231](https://github.com/zywave/SMLogging/commit/a7e1231))
-* reenqueue events if file lock is not aquired ([d0bb0ba](https://github.com/zywave/SMLogging/commit/d0bb0ba))
+* prevent BackgroundFileTraceListener from queuing events infinitely when failing to write to file by adding a MaxQueueSize setting defaulted to 10000 ([88ef72c](https://github.com/zywave/SMLogging/commit/88ef72c))
+* remove unecessary static locks ([5cbd964](https://github.com/zywave/SMLogging/commit/5cbd964))
+
+
+### Features
+
+* log failures to event log ([1c12355](https://github.com/zywave/SMLogging/commit/1c12355))
+* log fault exception details in error handler ([8b56bb8](https://github.com/zywave/SMLogging/commit/8b56bb8))
