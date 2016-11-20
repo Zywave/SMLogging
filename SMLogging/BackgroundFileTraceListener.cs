@@ -265,7 +265,7 @@ namespace SMLogging
 
         private readonly ConcurrentQueue<Event> _queue = new ConcurrentQueue<Event>();
         private CancellationTokenSource _workerCts;
-        private static readonly object _workerLock = new object();
+        private readonly object _workerLock = new object();
         private bool _maxQueueSizeReached = false;
 
         #endregion

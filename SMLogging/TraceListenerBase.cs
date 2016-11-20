@@ -413,7 +413,7 @@ namespace SMLogging
         }
 
         /// <summary>
-        /// Ensures the the trace listener has been initialized.
+        /// Ensures the trace listener has been initialized.
         /// </summary>
         protected void EnsureInitialized()
         {
@@ -488,7 +488,7 @@ namespace SMLogging
 
         private bool _hasConfiguration = false;
         private bool _isInitialized = false;
-        private static readonly object _initializeLock = new object();
+        private readonly object _initializeLock = new object(); //TODO: static?
 
         private const string _defaultTraceFormat = "{DateTime:yyyy-MM-dd} {DateTime:HH:mm:ss.FFF} {Message}";
         private const string _defaultTraceDataDelimiter = " ";
