@@ -123,6 +123,9 @@
   <data name="DateTimeTraceToken" xml:space="preserve">
     <value>DateTime={0:o}</value>
   </data>
+  <data name="FaultDetailHeader" xml:space="preserve">
+    <value>Fault Detail:</value>
+  </data>
   <data name="InvalidTraceListenerFilePath" xml:space="preserve">
     <value>Invalid file path.</value>
   </data>

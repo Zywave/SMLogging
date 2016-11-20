@@ -9,6 +9,12 @@ using System.Xml;
 
 namespace SMLogging
 {
+    using System.Globalization;
+    using System.IO;
+    using System.Runtime.Serialization;
+    using System.Text;
+    using SMLogging.Properties;
+
     /// <summary>
     /// Represents an error handler for logging service errors.
     /// </summary>
@@ -121,7 +127,58 @@ namespace SMLogging
                 data.Target?.Port ?? 0,
                 data.Target?.ToString() ?? "null",
                 data.Action ?? "null",
-                error);
+                GetErrorMessage(error));
+        }
+
+        private static string GetErrorMessage(Exception error)
+        {
+            var messageBuilder = new StringBuilder(error.ToString());
+
+            var faultException = error as FaultException;
+            if (faultException != null)
+            {
+                try
+                {
+                    Type exceptionType1 = null;
+                    for (var exceptionType2 = faultException.GetType(); exceptionType2 != typeof(FaultException) && exceptionType2 != null; exceptionType2 = exceptionType2.BaseType)
+                    {
+                        if (exceptionType2.IsGenericType && exceptionType2.GetGenericTypeDefinition() == typeof(FaultException<>))
+                        {
+                            exceptionType1 = exceptionType2;
+                            break;
+                        }
+                    }
+
+                    Type detailType = null;
+                    if (exceptionType1 != null)
+                    {
+                        detailType = exceptionType1.GetGenericArguments()[0];
+                    }
+                    if (detailType != null)
+                    {
+                        var detail = typeof(FaultException<>).MakeGenericType(detailType).GetProperty("Detail").GetValue(faultException, null);
+                        if (detail != null)
+                        {
+                            var serializer = new DataContractSerializer(detailType, null, int.MaxValue, false, false, null);
+                            messageBuilder.AppendLine().AppendLine(AssemblyResources.FaultDetailHeader);
+                            using (var stringWriter = new StringWriter(messageBuilder, CultureInfo.InvariantCulture))
+                            using (var xmlWriter = XmlWriter.Create(stringWriter))
+                            {
+                                serializer.WriteObject(xmlWriter, detail);
+                            }
+                        }
+                    }
+                }
+                catch
+                {
+                    if (Debugger.IsAttached)
+                    {
+                        throw;
+                    }
+                }
+            }
+
+            return messageBuilder.ToString();
         }
 
         private static readonly object _dataKey = new object();

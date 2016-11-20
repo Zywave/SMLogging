@@ -79,6 +79,15 @@ namespace SMLogging.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Fault Detail:.
+        /// </summary>
+        internal static string FaultDetailHeader {
+            get {
+                return ResourceManager.GetString("FaultDetailHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid file path..
         /// </summary>
         internal static string InvalidTraceListenerFilePath {
