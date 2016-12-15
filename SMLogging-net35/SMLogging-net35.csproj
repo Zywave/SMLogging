@@ -136,6 +136,9 @@
     <Compile Include="..\SMLogging\TraceSourceConverter.cs">
       <Link>TraceSourceConverter.cs</Link>
     </Compile>
+    <Compile Include="..\SMLogging\WindowsEventLogTraceListener.cs">
+      <Link>WindowsEventLogTraceListener.cs</Link>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

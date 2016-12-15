@@ -80,6 +80,21 @@ namespace SMLogging
 
         #endregion
 
+        /// <summary>
+        /// Gets the process identifier.
+        /// </summary>
+        protected int ProcessId => _processId;
+
+        /// <summary>
+        /// Gets the name of the process.
+        /// </summary>
+        protected string ProcessName => _processName;
+
+        /// <summary>
+        /// Gets the name of the application.
+        /// </summary>
+        protected string AppName => _appName;
+
         #region Public Methods
 
         /// <summary>
@@ -97,7 +112,7 @@ namespace SMLogging
 
             if (ShouldTrace(eventCache, source, eventType, id, null, null, data, null))
             {
-                var message = String.Empty;
+                var message = string.Empty;
                 if (data != null)
                 {
                     message = data.ToString();
@@ -150,7 +165,7 @@ namespace SMLogging
         [ComVisible(false)]
         public override void TraceEvent(TraceEventCache eventCache, string source, TraceEventType eventType, int id)
         {
-            TraceEvent(eventCache, source, eventType, id, String.Empty);
+            TraceEvent(eventCache, source, eventType, id, string.Empty);
         }
 
         /// <summary>
@@ -188,10 +203,10 @@ namespace SMLogging
 
             if (ShouldTrace(eventCache, source, eventType, id, format, args))
             {
-                var message = String.Empty;
+                var message = string.Empty;
                 if (args != null)
                 {
-                    message = String.Format(CultureInfo.InvariantCulture, format, args);
+                    message = string.Format(CultureInfo.InvariantCulture, format, args);
                 }
                 else
                 {
@@ -213,37 +228,7 @@ namespace SMLogging
         {
             WriteLine(FormatTrace(eventCache, source, eventType, id, message));
 
-            var includeOptions = ((int)TraceOutputOptionsLevels & (int)eventType) != 0;
-            if (includeOptions && eventCache != null)
-            {
-                IndentLevel++;
-                if ((TraceOptions.ProcessId & TraceOutputOptions) != TraceOptions.None)
-                {
-                    WriteLine(String.Format(CultureInfo.InvariantCulture, AssemblyResources.ProcessIdTraceToken, eventCache.ProcessId));
-                }
-                if ((TraceOptions.LogicalOperationStack & TraceOutputOptions) != TraceOptions.None)
-                {
-                    var stack = StringHelpers.Join(", ", eventCache.LogicalOperationStack.ToArray());
-                    WriteLine(String.Format(CultureInfo.InvariantCulture, AssemblyResources.LogicalOperationStackTraceToken, stack));
-                }
-                if ((TraceOptions.ThreadId & TraceOutputOptions) != TraceOptions.None)
-                {
-                    WriteLine(String.Format(CultureInfo.InvariantCulture, AssemblyResources.ThreadIdTraceToken, eventCache.ThreadId));
-                }
-                if ((TraceOptions.DateTime & TraceOutputOptions) != TraceOptions.None)
-                {
-                    WriteLine(String.Format(CultureInfo.InvariantCulture, AssemblyResources.DateTimeTraceToken, eventCache.DateTime));
-                }
-                if ((TraceOptions.Timestamp & TraceOutputOptions) != TraceOptions.None)
-                {
-                    WriteLine(String.Format(CultureInfo.InvariantCulture, AssemblyResources.TimestampTraceToken, eventCache.Timestamp));
-                }
-                if ((TraceOptions.Callstack & TraceOutputOptions) != TraceOptions.None)
-                {
-                    WriteLine(String.Format(CultureInfo.InvariantCulture, AssemblyResources.CallstackTraceToken, eventCache.Callstack));
-                }
-                IndentLevel--;
-            }
+            WriteTraceOutput(eventCache, eventType);
         }
 
         /// <summary>
@@ -308,13 +293,15 @@ namespace SMLogging
             namedArgs["EventType"] = eventType.ToString();
             namedArgs["EventId"] = id;
             namedArgs["Message"] = message;
-            namedArgs["ProcessId"] = eventCache != null ? eventCache.ProcessId : 0;
-            namedArgs["ThreadId"] = eventCache != null ? eventCache.ThreadId : String.Empty;
+            namedArgs["ProcessId"] = ProcessId;
+            namedArgs["ProcessName"] = ProcessName;
+            namedArgs["AppName"] = AppName;
+            namedArgs["ThreadId"] = eventCache != null ? eventCache.ThreadId : string.Empty;
             namedArgs["ActivityId"] = Trace.CorrelationManager.ActivityId;
-            namedArgs["LogicalOperationStack"] = String.Join(", ", Trace.CorrelationManager.LogicalOperationStack.ToArray().Select(s => s.ToString()).ToArray());
+            namedArgs["LogicalOperationStack"] = string.Join(", ", Trace.CorrelationManager.LogicalOperationStack.ToArray().Select(s => s.ToString()).ToArray());
             namedArgs["NewLine"] = Environment.NewLine;
 
-            var result = String.Empty;
+            var result = string.Empty;
 
             try
             {
@@ -326,6 +313,52 @@ namespace SMLogging
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Writes the trace output.
+        /// </summary>
+        /// <param name="eventCache">The event cache.</param>
+        /// <param name="eventType">Type of the event.</param>
+        /// <param name="writeLine">The write line method. Default is <see cref="M:WriteLine"/>.</param>
+        protected virtual void WriteTraceOutput(TraceEventCache eventCache, TraceEventType eventType, Action<string> writeLine = null)
+        {
+            if (writeLine == null)
+            {
+                writeLine = WriteLine;
+            }
+
+            var includeOptions = ((int)TraceOutputOptionsLevels & (int)eventType) != 0;
+            if (includeOptions && eventCache != null)
+            {
+                IndentLevel++;
+                if ((TraceOptions.ProcessId & TraceOutputOptions) != TraceOptions.None)
+                {
+                    writeLine(string.Format(CultureInfo.InvariantCulture, AssemblyResources.ProcessIdTraceToken, eventCache.ProcessId));
+                }
+                if ((TraceOptions.LogicalOperationStack & TraceOutputOptions) != TraceOptions.None)
+                {
+                    var stack = StringHelpers.Join(", ", eventCache.LogicalOperationStack.ToArray());
+                    writeLine(string.Format(CultureInfo.InvariantCulture, AssemblyResources.LogicalOperationStackTraceToken, stack));
+                }
+                if ((TraceOptions.ThreadId & TraceOutputOptions) != TraceOptions.None)
+                {
+                    writeLine(string.Format(CultureInfo.InvariantCulture, AssemblyResources.ThreadIdTraceToken, eventCache.ThreadId));
+                }
+                if ((TraceOptions.DateTime & TraceOutputOptions) != TraceOptions.None)
+                {
+                    writeLine(string.Format(CultureInfo.InvariantCulture, AssemblyResources.DateTimeTraceToken, eventCache.DateTime));
+                }
+                if ((TraceOptions.Timestamp & TraceOutputOptions) != TraceOptions.None)
+                {
+                    writeLine(string.Format(CultureInfo.InvariantCulture, AssemblyResources.TimestampTraceToken, eventCache.Timestamp));
+                }
+                if ((TraceOptions.Callstack & TraceOutputOptions) != TraceOptions.None)
+                {
+                    writeLine(string.Format(CultureInfo.InvariantCulture, AssemblyResources.CallstackTraceToken, eventCache.Callstack));
+                }
+                IndentLevel--;
+            }
         }
 
         /// <summary>
@@ -453,7 +486,7 @@ namespace SMLogging
                     {
                         if (isRequired)
                         {
-                            throw new ConfigurationErrorsException(String.Format(CultureInfo.InvariantCulture, AssemblyResources.MissingRequiredAttribute, name));
+                            throw new ConfigurationErrorsException(string.Format(CultureInfo.InvariantCulture, AssemblyResources.MissingRequiredAttribute, name));
                         }
                         else if (!defaultValue.Equals(nullValue))
                         {
@@ -488,7 +521,22 @@ namespace SMLogging
 
         private bool _hasConfiguration = false;
         private bool _isInitialized = false;
-        private readonly object _initializeLock = new object(); 
+        private readonly object _initializeLock = new object();
+
+        private static readonly int _processId;
+        private static readonly string _processName;
+        private static readonly string _appName;
+
+        static TraceListenerBase()
+        {
+            using (var process = Process.GetCurrentProcess())
+            {
+                _processId = process.Id;
+                _processName = process.ProcessName;
+            }
+
+            _appName = AppDomain.CurrentDomain.GetFriendlyName();
+        }
 
         private const string _defaultTraceFormat = "{DateTime:yyyy-MM-dd} {DateTime:HH:mm:ss.FFF} {Message}";
         private const string _defaultTraceDataDelimiter = " ";

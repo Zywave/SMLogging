@@ -204,8 +204,8 @@ namespace SMLogging
                 if (force)
                 {
                     Event oldEvt;
-                    _queue.TryDequeue(out oldEvt);
                     _queue.Enqueue(evt);
+                    _queue.TryDequeue(out oldEvt);
                 }
 
                 if (!_maxQueueSizeReached)

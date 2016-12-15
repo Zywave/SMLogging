@@ -512,9 +512,9 @@ namespace SMLogging
             }
             namedArgs["DateTime"] = dateTime;
             namedArgs["Timestamp"] = DateTime.UtcNow.Ticks;
-            namedArgs["ProcessId"] = _processId;
-            namedArgs["ProcessName"] = RemoveInvalidFileNameCharacters(_processName);
-            namedArgs["AppName"] = RemoveInvalidFileNameCharacters(_appName);
+            namedArgs["ProcessId"] = ProcessId;
+            namedArgs["ProcessName"] = RemoveInvalidFileNameCharacters(ProcessName);
+            namedArgs["AppName"] = RemoveInvalidFileNameCharacters(AppName);
 
             return StringHelpers.NamedFormat(CultureInfo.InvariantCulture, path, namedArgs);
         }
@@ -667,22 +667,7 @@ namespace SMLogging
         private FileLockHandlerBase _lockHandler;
         private FileLockStream _lockStream;
         private TextWriter _writer;
-
-        private static readonly int _processId;
-        private static readonly string _processName;
-        private static readonly string _appName;
-
-        static FileTraceListener()
-        {
-            using (var process = Process.GetCurrentProcess())
-            {
-                _processId = process.Id;
-                _processName = process.ProcessName;
-            }
-
-            _appName = AppDomain.CurrentDomain.GetFriendlyName();
-        }
-
+        
         #endregion
     }
 }

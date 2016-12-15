@@ -349,7 +349,7 @@ namespace SMLogging.Setup.CustomActions
         private const string ErrorLoggingFailSourceName = "System.ServiceModel.ErrorLogging.Fail";
         private const string ErrorLoggingFailSourceSwitchValue = "Error";
         private const string EventLogListenerName = "EventLog";
-        private const string EventLogTraceListenerType = "System.Diagnostics.EventLogTraceListener";
+        private const string EventLogTraceListenerType = "SMLogging.WindowsEventLogTraceListener, SMLogging, Version={0}.0, Culture=neutral, PublicKeyToken=ddc81ec55fc35caf";
         private const string EventLogSourceName = "SMLogging";
 
         #endregion

@@ -55,6 +55,7 @@
     <Compile Include="EncodingConverter.cs" />
     <Compile Include="ErrorLoggingBehavior.cs" />
     <Compile Include="ErrorLoggingErrorHandler.cs" />
+    <Compile Include="WindowsEventLogTraceListener.cs" />
     <Compile Include="ExclusiveFileLockHandler.cs" />
     <Compile Include="FileLockHandlerBase.cs" />
     <Compile Include="FileLockingMode.cs" />
