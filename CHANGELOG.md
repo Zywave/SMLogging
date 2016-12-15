@@ -1,3 +1,13 @@
+<a name="1.3.6"></a>
+## [1.3.6](https://github.com/zywave/SMLogging/compare/1.3.5...v1.3.6) (2016-12-15)
+
+
+### Bug Fixes
+
+* improve Windows Event Log messages when logging fails ([56e8e61](https://github.com/zywave/SMLogging/commit/56e8e61))
+
+
+
 <a name="1.3.5"></a>
 ## [1.3.5](https://github.com/zywave/SMLogging/compare/1.3.4...v1.3.5) (2016-11-20)
 
