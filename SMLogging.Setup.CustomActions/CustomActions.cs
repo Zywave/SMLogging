@@ -109,7 +109,7 @@ namespace SMLogging.Setup.CustomActions
                             new XAttribute("name", "Default")),
                         new XElement("add",
                             new XAttribute("name", EventLogListenerName),
-                            new XAttribute("type", EventLogTraceListenerType),
+                            new XAttribute("type", String.Format(EventLogTraceListenerTypeFormat, data["ProductVersion"])),
                             new XAttribute("initializeData", EventLogSourceName)))));
             }
             
@@ -229,7 +229,7 @@ namespace SMLogging.Setup.CustomActions
                             new XAttribute("name", "Default")),
                         new XElement("add",
                             new XAttribute("name", EventLogListenerName),
-                            new XAttribute("type", EventLogTraceListenerType),
+                            new XAttribute("type", String.Format(EventLogTraceListenerTypeFormat, data["ProductVersion"])),
                             new XAttribute("initializeData", EventLogSourceName)))));
             }
 
@@ -349,7 +349,7 @@ namespace SMLogging.Setup.CustomActions
         private const string ErrorLoggingFailSourceName = "System.ServiceModel.ErrorLogging.Fail";
         private const string ErrorLoggingFailSourceSwitchValue = "Error";
         private const string EventLogListenerName = "EventLog";
-        private const string EventLogTraceListenerType = "SMLogging.WindowsEventLogTraceListener, SMLogging, Version={0}.0, Culture=neutral, PublicKeyToken=ddc81ec55fc35caf";
+        private const string EventLogTraceListenerTypeFormat = "SMLogging.WindowsEventLogTraceListener, SMLogging, Version={0}.0, Culture=neutral, PublicKeyToken=ddc81ec55fc35caf";
         private const string EventLogSourceName = "SMLogging";
 
         #endregion
