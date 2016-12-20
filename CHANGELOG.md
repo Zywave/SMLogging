@@ -1,3 +1,13 @@
+<a name="1.3.7"></a>
+## [1.3.7](https://github.com/zywave/SMLogging/compare/1.3.6...v1.3.7) (2016-12-20)
+
+
+### Bug Fixes
+
+* product version formatted into event log type ([e511f0a](https://github.com/zywave/SMLogging/commit/e511f0a))
+
+
+
 <a name="1.3.6"></a>
 ## [1.3.6](https://github.com/zywave/SMLogging/compare/1.3.5...v1.3.6) (2016-12-15)
 
